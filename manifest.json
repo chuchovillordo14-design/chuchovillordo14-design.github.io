@@ -1,0 +1,36 @@
+{
+  "name": "Truco GOL — Truco Argentino",
+  "short_name": "Truco GOL",
+  "description": "Truco argentino con temática de fútbol. Liga, Mundial, Copas y más.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1a0e",
+  "theme_color": "#0f4a28",
+  "orientation": "portrait",
+  "categories": ["games", "entertainment"],
+  "lang": "es",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%230a1a0e'/%3E%3Crect x='28' y='18' width='136' height='156' rx='18' fill='%230f4a28' stroke='%23f5c518' stroke-width='6'/%3E%3Crect x='38' y='28' width='116' height='136' rx='12' fill='%230a2a14' stroke='%23f5c518' stroke-width='2'/%3E%3Ccircle cx='96' cy='88' r='34' fill='none' stroke='%23f5c518' stroke-width='5'/%3E%3Cpolygon points='96,58 103,80 127,80 108,94 115,116 96,102 77,116 84,94 65,80 89,80' fill='%23f5c518'/%3E%3Ctext x='96' y='172' font-size='22' text-anchor='middle' fill='%23f5c518' font-family='Georgia,serif' font-weight='bold' letter-spacing='1'%3ETRUCO%3C/text%3E%3Ctext x='47' y='55' font-size='20' text-anchor='middle' fill='%23f5c518' font-family='Georgia,serif' font-weight='bold'%3E1%3C/text%3E%3Ctext x='145' y='160' font-size='20' text-anchor='middle' fill='%23f5c518' font-family='Georgia,serif' font-weight='bold'%3E1%3C/text%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Jugar vs IA",
+      "url": "/?modo=ia",
+      "description": "Partida rápida contra la IA"
+    },
+    {
+      "name": "Desafío Diario",
+      "url": "/?modo=desafio",
+      "description": "El desafío de hoy"
+    }
+  ]
+}

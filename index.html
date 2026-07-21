@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <!-- Escape HTML global: usar SIEMPRE que se inyecte un nombre/dato de usuario
+         (o que llegue por red) dentro de innerHTML. Evita XSS. -->
+    <script>window.esc = function (s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    };</script>
+    <title>Truco GOL — Truco Argentino con Fútbol</title>
+    <meta name="description" content="Truco argentino tradicional con temática de fútbol: jugá contra la IA, dirigí tu club (Modo DT), Copas, Mundial, figuritas y más.">
+    <meta name="theme-color" content="#0f4a28">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="canonical" href="https://chuchovillordo14-design.github.io/">
+    <!-- Compartir (Open Graph) -->
+    <meta property="og:title" content="Truco GOL — Truco Argentino con Fútbol">
+    <meta property="og:description" content="Truco argentino con temática de fútbol: Modo DT, Copas, Mundial, figuritas y online.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://chuchovillordo14-design.github.io/">
+    <meta property="og:image" content="https://chuchovillordo14-design.github.io/portada.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://chuchovillordo14-design.github.io/portada.png">
+    <!-- Favicon embebido (carta de truco dorada) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='6' width='44' height='52' rx='7' fill='%230f4a28' stroke='%23f5c518' stroke-width='4'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23f5c518' font-family='Georgia,serif' font-weight='bold'%3E1%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Bebas+Neue&family=IM+Fell+English&family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.bundle.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-title" content="Truco GOL">
+    <style>
+    /* ══ Selector de equipos — LIGA PROFESIONAL ══ */
+    #eq-cat-container{ width:100%; max-width:420px; margin:14px auto 0; }
+    .eq-region{ margin-bottom:14px; }
+    .eq-region:last-child{ margin-bottom:0; }
+    .eq-region-title{
+      font-family:'Oswald',sans-serif; font-size:11px; font-weight:700;
+      letter-spacing:3px; color:var(--gold,#f5c518); opacity:.85;
+      text-transform:uppercase; text-align:left;
+      margin:0 0 6px 2px; padding-bottom:4px;
+      border-bottom:1px solid rgba(245,197,24,.25);
+    }
+    .eq-region .eq-cat + .eq-cat{ margin-top:6px; }
+    .eq-cat{
+      background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.15);
+      border-radius:10px; overflow:hidden;
+    }
+    .eq-cat-header{
+      display:flex; align-items:center; gap:10px; padding:8px 12px;
+      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+    }
+    .eq-cat-header:hover{ background:rgba(255,255,255,.06); }
+    .eq-cat-logo{
+      width:30px; height:42px; object-fit:contain;
+      filter:drop-shadow(0 1px 3px rgba(0,0,0,.5));
+    }
+    .eq-cat-textos{ display:flex; flex-direction:column; flex:1; text-align:left; }
+    .eq-cat-name{
+      font-family:'Oswald',sans-serif; font-size:13px; font-weight:600;
+      letter-spacing:2px; color:var(--gold,#f5c518);
+    }
+    .eq-cat-badge{
+      font-family:'Oswald',sans-serif; font-size:9px; letter-spacing:1px;
+      color:#fff; opacity:.65; text-transform:uppercase;
+    }
+    .eq-cat-arrow{ font-size:12px; color:#fff; opacity:.7; transition:transform .2s; }
+    .eq-cat.open .eq-cat-arrow{ transform:rotate(180deg); }
+    .equipo-grid{
+      display:none; grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:6px; padding:8px; max-height:200px; overflow-y:auto;
+      scrollbar-width:thin; border-top:1px solid rgba(255,255,255,.1);
+    }
+    .eq-cat.open .equipo-grid{ display:grid; }
+    .eq-card{
+      background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12);
+      border-radius:8px; padding:7px 3px 5px; cursor:pointer;
+      display:flex; flex-direction:column; align-items:center; gap:4px;
+      transition:border-color .15s, transform .1s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .eq-card:hover{ border-color:rgba(255,255,255,.4); transform:translateY(-2px); }
+    .eq-card.activo{
+      border:2px solid var(--gold,#f5c518);
+      box-shadow:0 0 10px rgba(245,197,24,.35);
+    }
+    .eq-card img{ width:34px; height:34px; object-fit:contain; }
+    .eq-nombre{
+      font-family:'Oswald',sans-serif; font-size:8px; line-height:1.15;
+      color:#fff; opacity:.85; text-align:center;
+    }
+    .equipo-elegido-lbl{
+      font-family:'Oswald',sans-serif; font-size:11px; color:var(--gold,#f5c518);
+      text-align:center; margin:6px 0 2px; min-height:14px;
+    }
+    /* ══ Partido Amistoso ══ */
+    #eq-cat-container-amistoso-j, #eq-cat-container-amistoso-r{
+      width:100%; max-width:420px; margin:6px auto 0;
+    }
+    .am-section-title{
+      font-family:'Oswald',sans-serif; font-size:11px; font-weight:700;
+      letter-spacing:2px; color:var(--gold,#f5c518); text-align:center;
+      margin:10px 0 2px; text-transform:uppercase;
+    }
+    .am-vs{
+      font-family:'Bebas Neue','Oswald',sans-serif; font-size:20px;
+      letter-spacing:3px; color:#fff; opacity:.6; text-align:center; margin:4px 0;
+    }
+    /* Escudos en la mesa */
+    .escudo-mini{
+      width:26px; height:26px; object-fit:contain;
+      background:rgba(255,255,255,.92); border-radius:50%;
+      padding:2px; box-shadow:0 1px 3px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.2);
+      vertical-align:middle;
+    }
+    /* ══ Avatares de DT ══ */
+    #dt-avatar-grid{
+      display:flex; justify-content:center; gap:12px;
+      margin:10px auto; max-width:420px;
+    }
+    .dt-card{
+      background:rgba(0,0,0,.35); border:2px solid rgba(255,255,255,.15);
+      border-radius:12px; padding:8px 10px 6px; cursor:pointer;
+      display:flex; flex-direction:column; align-items:center; gap:5px;
+      transition:border-color .15s, transform .1s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .dt-card:hover{ border-color:rgba(255,255,255,.45); transform:translateY(-2px); }
+    .dt-card.activo{
+      border-color:var(--gold,#f5c518);
+      box-shadow:0 0 12px rgba(245,197,24,.4);
+    }
+    .dt-card img{
+      width:64px; height:64px; object-fit:cover; border-radius:50%;
+      background:#fff;
+    }
+    .dt-card span{
+      font-family:'Oswald',sans-serif; font-size:9px; letter-spacing:.5px;
+      color:#fff; opacity:.85; text-transform:uppercase;
+    }
+    /* ══ Tabla de la liga ══ */
+    .liga-fecha{
+      font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:2px;
+      color:var(--gold,#f5c518); text-align:center; margin:4px 0 8px;
+      text-transform:uppercase;
+    }
+    .liga-tabla-wrap{ max-height:300px; overflow-y:auto; scrollbar-width:thin; }
+    .liga-t{
+      width:100%; border-collapse:collapse;
+      font-family:'Oswald',sans-serif; font-size:10px; color:#fff;
+    }
+    .liga-t th{
+      position:sticky; top:0; background:rgba(0,0,0,.85);
+      color:var(--gold,#f5c518); padding:4px 3px; font-weight:600;
+      letter-spacing:.5px; text-align:center; font-size:9px;
+    }
+    .liga-t td{
+      padding:3px; text-align:center;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .liga-t .tl{ text-align:left; white-space:nowrap; }
+    .liga-esc{
+      width:16px; height:16px; object-fit:contain;
+      vertical-align:-4px; margin-right:5px;
+      background:rgba(255,255,255,.9); border-radius:50%;
+      padding:1px; box-shadow:0 0 0 1px rgba(0,0,0,.25);
+    }
+    .liga-t tr.mio td{ background:rgba(245,197,24,.16); font-weight:600; }
+    .liga-t tr.z1 td:first-child{ box-shadow:inset 3px 0 0 #f5c518; }
+    .liga-t tr.z4 td:first-child{ box-shadow:inset 3px 0 0 #3fa9f5; }
+    .liga-t tr.zd td:first-child{ box-shadow:inset 3px 0 0 #e0151d; }
+    .liga-campeon{
+      font-family:'Oswald',sans-serif; font-size:13px; font-weight:700;
+      color:var(--gold,#f5c518); text-align:center; padding:8px;
+      border:1px dashed var(--gold,#f5c518); border-radius:8px; margin-bottom:8px;
+    }
+    .liga-leyenda{
+      font-family:'Oswald',sans-serif; font-size:8px; color:#fff; opacity:.55;
+      text-align:center; margin-top:6px; letter-spacing:.5px;
+    }
+    .liga-proximo{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      text-align:center; padding:6px; margin-bottom:8px;
+      background:rgba(245,197,24,.08); border:1px solid rgba(245,197,24,.3);
+      border-radius:8px;
+    }
+    .liga-proximo b{ color:var(--gold,#f5c518); }
+    /* ── Tabs Tabla / Fixture ── */
+    .liga-tabs{ display:flex; gap:6px; margin-bottom:8px; }
+    .liga-tab-btn{
+      flex:1; padding:6px; font-family:'Oswald',sans-serif; font-size:10px;
+      letter-spacing:1px; color:#fff; background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.18); border-radius:8px; cursor:pointer;
+    }
+    .liga-tab-btn.active{
+      color:#111; background:var(--gold,#f5c518); border-color:var(--gold,#f5c518);
+      font-weight:700;
+    }
+    /* ── Fixture ── */
+    .liga-fixture-wrap{ max-height:320px; overflow-y:auto; scrollbar-width:thin; }
+    .fx-fecha{
+      background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.12);
+      border-radius:8px; margin-bottom:6px; overflow:hidden;
+    }
+    .fx-fecha.actual{ border-color:var(--gold,#f5c518); }
+    .fx-hdr{
+      display:flex; align-items:center; gap:8px; padding:6px 10px;
+      cursor:pointer; user-select:none;
+    }
+    .fx-num{
+      font-family:'Oswald',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:1.5px; color:var(--gold,#f5c518); flex:1;
+    }
+    .fx-estado{
+      font-family:'Oswald',sans-serif; font-size:8px; color:#fff; opacity:.6;
+      letter-spacing:.5px;
+    }
+    .fx-fecha.actual .fx-estado{ color:var(--gold,#f5c518); opacity:1; }
+    .fx-arrow{ font-size:10px; color:#fff; opacity:.6; transition:transform .2s; }
+    .fx-fecha.open .fx-arrow{ transform:rotate(180deg); }
+    .fx-partidos{ display:none; border-top:1px solid rgba(255,255,255,.08); padding:4px 8px 6px; }
+    .fx-fecha.open .fx-partidos{ display:block; }
+    .fx-partido{
+      display:flex; align-items:center; gap:4px; padding:3px 2px;
+      font-family:'Oswald',sans-serif; font-size:9px; color:#fff;
+      border-bottom:1px solid rgba(255,255,255,.05);
+    }
+    .fx-partido:last-child{ border-bottom:none; }
+    .fx-partido.mio{ background:rgba(245,197,24,.13); border-radius:5px; font-weight:600; }
+    .fx-eq{ flex:1; display:flex; align-items:center; gap:4px; white-space:nowrap; overflow:hidden; }
+    .fx-eq.fx-der{ justify-content:flex-end; }
+    .fx-marcador{
+      min-width:38px; text-align:center; color:var(--gold,#f5c518);
+      font-weight:700; font-size:9px;
+    }
+    .fx-gano{ color:#7be67b; }
+    .fx-perdio{ color:rgba(255,255,255,.45); }
+    /* ── Mundial 2026 ── */
+    .mundial-info-linea{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      text-align:center; margin:4px 0; letter-spacing:.5px;
+    }
+    .mundial-proximo{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      text-align:center; padding:6px; margin-bottom:8px;
+      background:rgba(245,197,24,.08); border:1px solid rgba(245,197,24,.3);
+      border-radius:8px;
+    }
+    .mundial-proximo b{ color:var(--gold,#f5c518); }
+    .mundial-campeon{
+      font-family:'Oswald',sans-serif; font-size:13px; font-weight:700;
+      color:var(--gold,#f5c518); text-align:center; padding:8px;
+      border:1px dashed var(--gold,#f5c518); border-radius:8px; margin-bottom:8px;
+    }
+    .mundial-fin{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      opacity:.75; text-align:center; margin-top:4px;
+    }
+    .mundial-vacio{
+      font-family:'Oswald',sans-serif; font-size:10px; color:#fff;
+      opacity:.55; text-align:center; padding:10px;
+    }
+    .mundial-grupo{
+      background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.12);
+      border-radius:8px; margin-bottom:8px; padding:4px 6px 6px; overflow:hidden;
+    }
+    .mundial-grupo.mundial-grupo-mio{ border-color:var(--gold,#f5c518); }
+    .mundial-grupo .fx-num{ display:block; padding:4px 2px 2px; }
+    /* ── Cuadro de eliminación ── */
+    .mundial-bracket{ max-height:380px; overflow-y:auto; scrollbar-width:thin; }
+    .mb-ronda{ margin-bottom:10px; }
+    .mb-ronda-titulo{
+      font-family:'Oswald',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:1.5px; color:var(--gold,#f5c518); margin-bottom:4px;
+      text-transform:uppercase;
+    }
+    .mb-partido{
+      display:flex; flex-direction:column; gap:2px;
+      background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.1);
+      border-radius:6px; padding:4px 8px; margin-bottom:4px;
+    }
+    .mb-partido.mio{ border-color:var(--gold,#f5c518); background:rgba(245,197,24,.1); }
+    .mb-jugador{
+      display:flex; align-items:center; justify-content:space-between; gap:6px;
+      font-family:'Oswald',sans-serif; font-size:9px; color:#fff;
+    }
+    /* ── Álbum de figuritas ── */
+    .album-box{ max-width:480px; }
+    .album-prog-txt{
+      font-family:'Oswald',sans-serif; font-size:12px; color:#fff;
+      text-align:center; margin:4px 0;
+    }
+    .album-repes{ color:var(--gold,#f5c518); }
+    .album-prog-bar{
+      height:8px; background:rgba(0,0,0,.4); border-radius:6px; overflow:hidden;
+      border:1px solid rgba(255,255,255,.15); margin-bottom:8px;
+    }
+    .album-prog-bar div{
+      height:100%; background:linear-gradient(90deg,#c89b3c,#f5c518);
+      transition:width .4s;
+    }
+    .album-completo{
+      font-family:'Oswald',sans-serif; font-size:12px; font-weight:700;
+      color:var(--gold,#f5c518); text-align:center; padding:6px;
+      border:1px dashed var(--gold,#f5c518); border-radius:8px; margin-bottom:8px;
+    }
+    .album-sobre-btn{ width:100%; margin-bottom:10px; }
+    .album-sobre-btn:disabled{ opacity:.4; cursor:default; }
+    .album-sobre-btn.pulse{ animation:sobrePulse 1.2s ease-in-out infinite alternate; }
+    @keyframes sobrePulse{
+      from{ box-shadow:0 0 0 rgba(245,197,24,0); }
+      to  { box-shadow:0 0 16px rgba(245,197,24,.55); }
+    }
+    .album-canje-btn{ width:100%; margin-bottom:10px; font-size:10.5px; }
+    .album-canje-btn:disabled{ opacity:.4; cursor:default; }
+    .album-wrap{ max-height:340px; overflow-y:auto; scrollbar-width:thin; }
+    .album-sec-titulo{
+      font-family:'Oswald',sans-serif; font-size:11px; font-weight:700;
+      letter-spacing:2px; margin:8px 0 4px;
+    }
+    .album-fila{
+      display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px;
+    }
+    .album-figu{ position:relative; }
+    .album-figu svg{ width:100%; height:auto; display:block; border-radius:8px; }
+    .album-figu.falta{ opacity:.8; }
+    .album-figu:not(.falta){ cursor:pointer; transition:transform .15s; }
+    .album-figu:not(.falta):hover{ transform:scale(1.06); }
+    .album-cant{
+      position:absolute; bottom:3px; right:3px;
+      font-family:'Oswald',sans-serif; font-size:8px; font-weight:700;
+      color:#111; background:var(--gold,#f5c518); border-radius:6px;
+      padding:1px 4px;
+    }
+    .album-ayuda{
+      font-family:'Oswald',sans-serif; font-size:8px; color:#fff; opacity:.55;
+      text-align:center; margin-top:8px; letter-spacing:.5px;
+    }
+    /* ── Overlay de apertura de sobre ── */
+    #sobre-overlay{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.82); z-index:1100;
+    }
+    #sobre-overlay.show{ display:flex; }
+    .sobre-panel{
+      background:linear-gradient(160deg,#0e2238,#06121f);
+      border:2px solid var(--gold,#f5c518); border-radius:16px;
+      padding:18px 20px; text-align:center; max-width:420px; width:92%;
+      box-shadow:0 0 50px rgba(245,197,24,.25);
+    }
+    .sobre-titulo{
+      font-family:'Bebas Neue','Oswald',sans-serif; font-size:26px;
+      letter-spacing:4px; color:var(--gold,#f5c518);
+    }
+    .sobre-sub{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      opacity:.85; margin:2px 0 12px;
+    }
+    .sobre-cartas{
+      display:flex; gap:10px; justify-content:center; margin-bottom:14px;
+    }
+    .sobre-carta{
+      width:30%; max-width:120px; opacity:0; transform:rotateY(90deg) scale(.8);
+      animation:figuFlip .55s cubic-bezier(.2,.9,.3,1.2) forwards;
+    }
+    .sobre-carta svg{ width:100%; height:auto; display:block; border-radius:10px; }
+    .sobre-carta.sobre-leyenda svg{
+      box-shadow:0 0 22px rgba(245,197,24,.85);
+      border-radius:10px;
+      animation:leyendaGlow 1s ease-in-out infinite alternate;
+    }
+    @keyframes figuFlip{
+      to{ opacity:1; transform:rotateY(0) scale(1); }
+    }
+    @keyframes leyendaGlow{
+      from{ box-shadow:0 0 12px rgba(245,197,24,.5); }
+      to  { box-shadow:0 0 28px rgba(245,197,24,1); }
+    }
+    /* ── Zoom de figurita ── */
+    #figu-zoom-overlay{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.82); z-index:1200;
+    }
+    #figu-zoom-overlay.show{ display:flex; }
+    .figu-zoom-panel{ max-width:240px; }
+    .figu-zoom-card{ width:160px; max-width:60vw; margin:0 auto 12px; animation:figuFlip .35s cubic-bezier(.2,.9,.3,1.2) both; }
+    .figu-zoom-card svg{ width:100%; height:auto; display:block; border-radius:10px; }
+    .figu-zoom-nombre{
+      font-family:'Oswald',sans-serif; font-size:14px; font-weight:700; color:#fff;
+    }
+    .figu-zoom-meta{
+      font-family:'Oswald',sans-serif; font-size:10px; color:rgba(255,255,255,.7);
+      margin:4px 0 2px;
+    }
+    .figu-zoom-cant{
+      font-family:'Oswald',sans-serif; font-size:9px; color:var(--gold,#f5c518);
+      margin-bottom:8px;
+    }
+    .figu-zoom-bio{
+      font-family:'IM Fell English', Georgia, serif; font-style:italic;
+      font-size:11px; line-height:1.4; color:rgba(255,255,255,.82);
+      margin:6px auto 8px; max-width:220px;
+    }
+    /* ── Rating + stats en el zoom de figurita ── */
+    .figu-zoom-rating{
+      font-family:'Oswald',sans-serif; font-size:26px; font-weight:800; line-height:1;
+      margin:6px 0 8px;
+    }
+    .figu-zoom-rating span{ font-size:10px; opacity:.7; font-weight:700; }
+    .figu-zoom-stats{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:6px 10px;
+      max-width:200px; margin:0 auto 10px;
+    }
+    .figu-stat{
+      display:flex; align-items:baseline; justify-content:center; gap:4px;
+      background:rgba(255,255,255,.06); border-radius:6px; padding:3px 4px;
+    }
+    .figu-stat-val{ font-family:'Oswald',sans-serif; font-size:14px; font-weight:800; color:#fff; }
+    .figu-stat-lbl{ font-family:'Oswald',sans-serif; font-size:8px; font-weight:700; color:rgba(255,255,255,.6); letter-spacing:.5px; }
+    /* Temblor dramático cuando sale una LEYENDA en el sobre */
+    .sobre-carta.sobre-leyenda{ animation:figuFlip .55s cubic-bezier(.2,.9,.3,1.2) forwards, leyendaShake 1.6s .6s ease-in-out 2; }
+    @keyframes leyendaShake{
+      0%,100%{ transform:translateX(0) rotate(0); }
+      20%{ transform:translateX(-3px) rotate(-1.5deg); }
+      40%{ transform:translateX(3px) rotate(1.5deg); }
+      60%{ transform:translateX(-2px) rotate(-1deg); }
+      80%{ transform:translateX(2px) rotate(1deg); }
+    }
+    /* ── Brillo holográfico (foil) en cartas leyenda y oro ── */
+    .foil{ position:relative; isolation:isolate; }
+    .foil::after{
+      content:""; position:absolute; inset:0; border-radius:9px; pointer-events:none; z-index:4;
+      background:linear-gradient(115deg, transparent 28%, rgba(255,255,255,.55) 42%,
+        rgba(150,210,255,.38) 48%, rgba(205,150,255,.38) 54%, rgba(255,220,150,.38) 60%, transparent 74%);
+      background-size:250% 100%;
+      mix-blend-mode:screen;
+      animation:foilSweep 3.2s linear infinite;
+      opacity:.8;
+    }
+    .foil-oro::after{ animation-duration:3.8s; opacity:.6; }
+    @keyframes foilSweep{ 0%{ background-position:130% 0 } 100%{ background-position:-30% 0 } }
+    @media (prefers-reduced-motion: reduce){ .foil::after{ animation:none; opacity:.35 } }
+    /* ── Badge de sobres en el FAB ── */
+    .fab-album{ position:relative; }
+    .fab-badge{
+      position:absolute; top:-4px; right:-4px;
+      min-width:16px; height:16px; border-radius:8px;
+      background:#e0151d; color:#fff; font-size:9px; font-weight:700;
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Oswald',sans-serif; padding:0 3px;
+      border:1px solid #fff;
+    }
+    /* ══ Modal de reglas de la liga ══ */
+    .lr-intro{
+      font-family:'Oswald',sans-serif; font-size:12px; color:var(--gold,#f5c518);
+      text-align:center; margin:4px 0 10px; letter-spacing:1px;
+    }
+    .lr-item{
+      display:flex; align-items:flex-start; gap:10px;
+      font-family:'Oswald',sans-serif; font-size:11px; line-height:1.45;
+      color:#fff; padding:6px 4px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .lr-item:last-of-type{ border-bottom:none; }
+    .lr-item b{ color:var(--gold,#f5c518); font-weight:600; }
+    .lr-ico{ font-size:15px; line-height:1.2; flex-shrink:0; }
+    @media (max-width:380px){
+      .equipo-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+    }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LOADING
+     ══════════════════════════════════════════ -->
+<div id="loading">
+  <div class="ld-title">TRUCO ARGENTINO</div>
+  <div class="ld-suits">♠ ♥ ♦ ♣</div>
+  <div class="ld-bar-bg"><div class="ld-bar" id="lbar"></div></div>
+  <div class="ld-msg" id="lmsg">Iniciando motor...</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MENÚ PRINCIPAL
+     ══════════════════════════════════════════ -->
+<div id="main-menu">
+
+  <!-- Cancha SVG de fondo -->
+  <div class="mm-cancha" aria-hidden="true">
+    <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- Línea central -->
+      <line x1="0" y1="300" x2="400" y2="300" stroke="#fff" stroke-width="2"/>
+      <!-- Círculo central -->
+      <circle cx="200" cy="300" r="60" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Punto central -->
+      <circle cx="200" cy="300" r="4" fill="#fff"/>
+      <!-- Área grande arriba -->
+      <rect x="80" y="20" width="240" height="110" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Área chica arriba -->
+      <rect x="130" y="20" width="140" height="55" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Arco arriba -->
+      <rect x="165" y="5" width="70" height="20" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Área grande abajo -->
+      <rect x="80" y="470" width="240" height="110" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Área chica abajo -->
+      <rect x="130" y="525" width="140" height="55" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Arco abajo -->
+      <rect x="165" y="575" width="70" height="20" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Borde cancha -->
+      <rect x="10" y="10" width="380" height="580" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Franjas de pasto alternado -->
+      <rect x="10" y="10"  width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="106" width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="202" width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="298" width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="394" width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="490" width="380" height="48" fill="#fff" opacity=".025"/>
+    </svg>
+  </div>
+
+  <!-- Confetti celeste y blanco -->
+  <div class="mm-confetti" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="mm-content">
+
+    <!-- Escudo SVG Argentina -->
+    <svg class="mm-escudo" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-label="Escudo">
+      <!-- Forma de escudo -->
+      <path d="M40 5 L70 15 L70 45 Q70 65 40 75 Q10 65 10 45 L10 15 Z" fill="#2b5fa8" stroke="rgba(106,180,245,.6)" stroke-width="1.5"/>
+      <!-- Franja celeste arriba -->
+      <path d="M10 15 L70 15 L70 30 L10 30 Z" fill="#6ab4f5" opacity=".4"/>
+      <!-- Franja blanca -->
+      <path d="M10 30 L70 30 L70 45 L10 45 Z" fill="#fff" opacity=".2"/>
+      <!-- Franja celeste abajo -->
+      <path d="M10 45 L70 45 Q70 60 40 70 Q10 60 10 45 Z" fill="#6ab4f5" opacity=".3"/>
+      <!-- Sol de mayo simplificado -->
+      <circle cx="40" cy="40" r="10" fill="#f5c518" opacity=".9"/>
+      <circle cx="40" cy="40" r="7" fill="#f5c518"/>
+      <!-- Rayos del sol -->
+      <g fill="#f5c518" opacity=".8">
+        <rect x="39" y="25" width="2" height="5" rx="1"/>
+        <rect x="39" y="50" width="2" height="5" rx="1"/>
+        <rect x="25" y="39" width="5" height="2" rx="1"/>
+        <rect x="50" y="39" width="5" height="2" rx="1"/>
+        <rect x="29.5" y="29.5" width="2" height="5" rx="1" transform="rotate(45 30.5 32)"/>
+        <rect x="49.5" y="46"  width="2" height="5" rx="1" transform="rotate(45 50.5 48.5)"/>
+        <rect x="29.5" y="46"  width="2" height="5" rx="1" transform="rotate(-45 30.5 48.5)"/>
+        <rect x="49.5" y="29.5" width="2" height="5" rx="1" transform="rotate(-45 50.5 32)"/>
+      </g>
+      <!-- Texto AFA simplificado -->
+      <text x="40" y="40" text-anchor="middle" dominant-baseline="central" font-family="Oswald,sans-serif" font-size="5" font-weight="700" fill="#fff" opacity=".9">AFA</text>
+    </svg>
+
+    <div class="mm-logo">
+      <div class="mm-logo-country">REPÚBLICA ARGENTINA</div>
+      <h1 class="mm-title">TRUCO</h1>
+      <div class="mm-subtitle">ARGENTINO</div>
+      <div class="mm-numero">♠ ♥ ♦ ♣</div>
+    </div>
+
+    <nav class="mm-nav">
+
+      <!-- ══ JUGAR YA — arranque instantáneo vs IA, sin registro ══ -->
+      <button class="mm-btn mm-btn-primary mm-acc-jugarya" onclick="jugarYa()">
+        <span class="mm-btn-icon">⚡</span>
+        <span class="mm-btn-text">
+          <strong>PICADITO</strong>
+          <small>Una manito rápida contra la IA · sin vueltas ni registro</small>
+        </span>
+        <span class="mm-badge mm-badge-gold">RÁPIDO</span>
+      </button>
+
+      <!-- ══ JUGAR POR DINERO — destacado, primero ══ -->
+      <div class="mm-seccion dinero"><span>💰 JUGAR POR DINERO</span></div>
+
+      <button class="mm-btn mm-btn-dinero" onclick="casaAbrirPanel('1v1')">
+        <span class="mm-btn-icon">🤜🤛</span>
+        <span class="mm-btn-text">
+          <strong>MANO A MANO</strong>
+          <small>1 vs 1 · Pactá la apuesta, Chucho supervisa el resultado</small>
+        </span>
+        <span class="mm-badge mm-badge-gold">HOT</span>
+      </button>
+
+      <button class="mm-btn mm-btn-dinero" onclick="casaAbrirPanel('torneo')">
+        <span class="mm-btn-icon">🏅</span>
+        <span class="mm-btn-text">
+          <strong>TORNEO CON APUESTA</strong>
+          <small>4 u 8 jugadores · Bracket eliminatorio · Pozo al ganador</small>
+        </span>
+        <span class="mm-badge mm-badge-gold">NUEVO</span>
+      </button>
+
+      <!-- ══ MODO DT — carrera y copas ══ -->
+      <div class="mm-seccion"><span>⚽ MODO DT</span></div>
+
+      <button class="mm-btn mm-btn-primary mm-acc-manager" onclick="clubAbrir()">
+        <span class="mm-btn-icon">🏟️</span>
+        <span class="mm-btn-text">
+          <strong>CARRERA · DIRIGÍ TU CLUB</strong>
+          <small>Liga, fichajes e instalaciones · <span id="club-menu-money">Comenzar</span></small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-copa mm-acc-liberta" onclick="copaAbrir('libertadores')">
+        <span class="mm-btn-icon">🏆</span>
+        <span class="mm-btn-text">
+          <strong>COPA LIBERTADORES</strong>
+          <small>Grupos + llave · Los grandes de Sudamérica</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-copa mm-acc-champions" onclick="copaAbrir('champions')">
+        <span class="mm-btn-icon">⭐</span>
+        <span class="mm-btn-text">
+          <strong>CHAMPIONS LEAGUE</strong>
+          <small>LaLiga, Premier y más · Elite europea</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-copa mm-acc-mundial" onclick="irA('mundial-screen')">
+        <span class="mm-btn-icon">🌍</span>
+        <span class="mm-btn-text">
+          <strong>MUNDIAL 2026</strong>
+          <small>48 selecciones · 12 grupos · Eliminación directa</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-copa mm-btn-cwc mm-acc-cwc" onclick="copaAbrir('cwc')">
+        <span class="mm-btn-icon">👑</span>
+        <span class="mm-btn-text">
+          <strong>MUNDIAL DE CLUBES</strong>
+          <small>Campeón de América vs campeón de Europa</small>
+        </span>
+      </button>
+
+      <!-- ══ PARTIDA RÁPIDA — sin dinero real ══ -->
+      <div class="mm-seccion"><span>🎮 PARTIDA RÁPIDA · SIN APUESTA</span></div>
+
+      <button class="mm-btn mm-acc-amistoso" onclick="irA('amistoso-screen')">
+        <span class="mm-btn-icon">🤝</span>
+        <span class="mm-btn-text">
+          <strong>PARTIDO AMISTOSO</strong>
+          <small>Elegí los dos equipos · Sin ranking ni liga</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-acc-2v2" onclick="iniciar2v2()">
+        <span class="mm-btn-icon">👥</span>
+        <span class="mm-btn-text">
+          <strong>2 VS 2 (DE A PARES)</strong>
+          <small>Vos + compañero IA contra 2 rivales · Nuevo</small>
+        </span>
+        <span class="mm-badge mm-badge-gold">BETA</span>
+      </button>
+
+      <button class="mm-btn mm-acc-2v2" onclick="online2v2()">
+        <span class="mm-btn-icon">🌐</span>
+        <span class="mm-btn-text">
+          <strong>2 VS 2 ONLINE</strong>
+          <small>Sala de 4 por código · asientos vacíos = bots</small>
+        </span>
+        <span class="mm-badge mm-badge-gold">BETA</span>
+      </button>
+
+      <button class="mm-btn mm-acc-online" onclick="irA('online-screen')">
+        <span class="mm-btn-icon">🌐</span>
+        <span class="mm-btn-text">
+          <strong>PARTIDO ONLINE</strong>
+          <small>En vivo contra otra persona por internet</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-acc-anotador" onclick="irA('anotador-screen')">
+        <span class="mm-btn-icon">📋</span>
+        <span class="mm-btn-text">
+          <strong>ANOTADOR</strong>
+          <small>Llevá los tantos de tu partida presencial</small>
+        </span>
+      </button>
+
+    </nav>
+
+    <div class="mm-footer">
+      <button class="mm-link" onclick="openModal('liga-modal')">🏆 Liga</button>
+      <button class="mm-link" onclick="openModal('album-modal')">📒 Álbum</button>
+      <button class="mm-link" onclick="openModal('tutorial-modal')">📜 Reglas</button>
+      <button class="mm-link" onclick="openModal('settings-modal')">⚙️ Ajustes</button>
+      <button class="mm-link" onclick="openModal('stats-modal')">📊 Stats</button>
+    </div>
+
+    <div class="mm-version">TRUCO GOL · fútbol + truco · v1.0</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA DE REGISTRO (JUGAR vs IA)
+     ══════════════════════════════════════════ -->
+<div id="name-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+  <div class="ns-title">REGISTRO DEL DT</div>
+  <div class="ns-sub">Elegí tu avatar de director técnico y el club que vas a dirigir</div>
+  <div class="avatar-grid" id="avatar-grid"></div>
+  <input type="text" id="name-input" class="name-input" placeholder="Nombre del DT (Ej: El Míster)" maxlength="12">
+  <div id="eq-cat-container"></div>
+  <div class="equipo-elegido-lbl" id="equipo-elegido-lbl"></div>
+  <button class="btn primary" onclick="setName()">⚽ SALIR A LA CANCHA</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PARTIDO AMISTOSO (elegís los dos equipos)
+     ══════════════════════════════════════════ -->
+<div id="amistoso-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+  <div class="ns-title">PARTIDO AMISTOSO</div>
+  <div class="ns-sub">Elegí los dos equipos que se van a enfrentar</div>
+
+  <div class="am-section-title">⚽ Tu equipo</div>
+  <div id="eq-cat-container-amistoso-j"></div>
+  <div class="equipo-elegido-lbl" id="amistoso-eq-j-lbl"></div>
+
+  <div class="am-vs">VS</div>
+
+  <div class="am-section-title">🆚 Rival</div>
+  <div id="eq-cat-container-amistoso-r"></div>
+  <div class="equipo-elegido-lbl" id="amistoso-eq-r-lbl"></div>
+
+  <button class="btn primary" id="btn-jugar-amistoso" onclick="iniciarPartidoAmistoso()" disabled>⚽ JUGAR AMISTOSO</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MUNDIAL 2026 (48 selecciones, grupos + cuadro)
+     ══════════════════════════════════════════ -->
+<div id="mundial-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+  <div class="ns-title">MUNDIAL 2026</div>
+  <div class="ns-sub">48 selecciones · 12 grupos · cuadro de eliminación directa</div>
+
+  <div id="mundial-setup">
+    <div class="am-section-title">🌍 Elegí tu selección</div>
+    <div id="mundial-eq-container"></div>
+    <div class="equipo-elegido-lbl" id="mundial-eq-lbl"></div>
+    <button class="btn primary" id="btn-mundial-empezar" onclick="mundialEmpezar()" disabled>🏆 EMPEZAR MUNDIAL</button>
+  </div>
+
+  <div id="mundial-en-curso">
+    <div id="mundial-info"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ANOTADOR
+     ══════════════════════════════════════════ -->
+<div id="anotador-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+
+  <div class="an-header">
+    <div class="an-title">ANOTADOR</div>
+    <div class="an-sub">Partida entre dos jugadores</div>
+  </div>
+
+  <!-- Nombres -->
+  <div class="an-names">
+    <div class="an-team">
+      <input type="text" class="an-name-input" id="an-name-j" placeholder="Jugador 1" maxlength="10" oninput="anActualizar()">
+    </div>
+    <div class="an-vs">vs</div>
+    <div class="an-team rival">
+      <input type="text" class="an-name-input rival" id="an-name-r" placeholder="Jugador 2" maxlength="10" oninput="anActualizar()">
+    </div>
+  </div>
+
+  <!-- Modo de juego -->
+  <div class="an-mode-row">
+    <button class="an-mode-btn active" id="an-mode-30" onclick="anSetMode(30)">A 30</button>
+    <button class="an-mode-btn" id="an-mode-15" onclick="anSetMode(15)">A 15</button>
+    <span class="an-mode-sep">|</span>
+    <button class="an-mode-btn" id="an-mode-bo3" onclick="anSetMode('bo3')">MJ3</button>
+  </div>
+
+  <!-- Tanteador con fósforos — panel principal -->
+  <div class="an-tanteador">
+    <!-- Equipo 1 -->
+    <div class="an-team-panel" id="an-panel-j">
+      <div class="an-team-name" id="an-lbl-j">Jugador 1</div>
+      <div class="an-fosforos" id="an-fosforos-j"></div>
+      <div class="an-pts-big" id="an-pts-j">0</div>
+      <div class="an-btn-row">
+        <button class="an-minus" onclick="anSumar('j', -1)">−</button>
+        <button class="an-plus"  onclick="anSumar('j', +1)">+1</button>
+        <button class="an-plus2" onclick="anSumar('j', +2)">+2</button>
+        <button class="an-plus3" onclick="anSumar('j', +3)">+3</button>
+      </div>
+    </div>
+
+    <!-- Separador central con progreso -->
+    <div class="an-center">
+      <div class="an-progress-wrap">
+        <div class="an-prog-j" id="an-prog-j" style="height:0%"></div>
+        <div class="an-prog-r" id="an-prog-r" style="height:0%"></div>
+      </div>
+      <div class="an-limit-lbl" id="an-limit-lbl">30</div>
+    </div>
+
+    <!-- Equipo 2 -->
+    <div class="an-team-panel rival" id="an-panel-r">
+      <div class="an-team-name rival" id="an-lbl-r">Jugador 2</div>
+      <div class="an-fosforos" id="an-fosforos-r"></div>
+      <div class="an-pts-big rival" id="an-pts-r">0</div>
+      <div class="an-btn-row">
+        <button class="an-minus" onclick="anSumar('r', -1)">−</button>
+        <button class="an-plus rival"  onclick="anSumar('r', +1)">+1</button>
+        <button class="an-plus2 rival" onclick="anSumar('r', +2)">+2</button>
+        <button class="an-plus3 rival" onclick="anSumar('r', +3)">+3</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historial -->
+  <div class="an-historial-wrap">
+    <div class="an-historial-title">HISTORIAL DE LA MANO</div>
+    <div class="an-historial" id="an-historial"></div>
+  </div>
+
+  <!-- Acciones inferiores -->
+  <div class="an-actions">
+    <button class="btn" onclick="anNuevaMano()">↺ NUEVA MANO</button>
+    <button class="btn primary" onclick="anGuardarPartida()">💾 GUARDAR PARTIDA</button>
+    <button class="btn danger" onclick="anReset()">✕ REINICIAR</button>
+  </div>
+
+  <!-- Banner ganador -->
+  <div class="an-winner-banner" id="an-winner-banner" style="display:none">
+    <div class="an-winner-text" id="an-winner-text">🏆 ¡GANÓ JUGADOR 1!</div>
+    <button class="btn primary" onclick="anReset()">NUEVA PARTIDA</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     COPAS DE CLUBES (Libertadores / Champions) — copas.js
+     ══════════════════════════════════════════ -->
+<div id="copa-screen">
+  <div id="copa-content"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PARTIDO ONLINE (1v1 por internet)
+     ══════════════════════════════════════════ -->
+<div id="online-screen">
+  <button class="back-btn" onclick="onlineVolver()">← Volver</button>
+
+  <div class="ns-title">PARTIDO ONLINE</div>
+  <div class="ns-sub">Jugá una partida real contra otra persona, donde sea</div>
+
+  <!-- Menú principal: crear o unirse -->
+  <div class="online-card" id="online-menu">
+    <input type="text" id="online-nombre" class="name-input" placeholder="Tu nombre" maxlength="12">
+
+    <button class="btn primary online-big-btn" onclick="onlineBuscarPartida()">🎯 BUSCAR RIVAL</button>
+    <div class="online-sub">Te emparejamos al toque con alguien que esté buscando</div>
+
+    <div class="online-sep">— o jugá con un amigo —</div>
+
+    <button class="btn online-big-btn" onclick="onlineCrearSala()">🆕 CREAR SALA</button>
+
+    <div class="online-sep">— o —</div>
+
+    <div class="online-join-row">
+      <input type="text" id="online-codigo-input" class="online-code-input" placeholder="CÓDIGO" maxlength="5">
+      <button class="btn respond" onclick="onlineUnirseSala()">UNIRSE</button>
+    </div>
+
+    <button class="online-config-toggle" type="button" onclick="onlineToggleConfig()">⚙️ Servidor</button>
+    <div class="online-config" id="online-config" style="display:none">
+      <input type="text" id="online-server-url" class="name-input" placeholder="wss://tu-servidor.onrender.com">
+      <button class="btn" onclick="onlineGuardarUrl()">Guardar dirección</button>
+    </div>
+
+    <div class="online-msg" id="online-menu-msg"></div>
+  </div>
+
+  <!-- Buscando rival en la cola pública -->
+  <div class="online-card" id="online-buscando" style="display:none">
+    <div class="online-spinner"></div>
+    <div class="online-waiting-msg" id="online-buscando-msg">Buscando rival...</div>
+    <button class="btn danger" onclick="onlineCancelarBusqueda()">CANCELAR</button>
+  </div>
+
+  <!-- Sala creada: esperando rival -->
+  <div class="online-card" id="online-waiting" style="display:none">
+    <div class="online-codigo-label">Código de sala</div>
+    <div class="online-codigo-big" id="online-codigo-big">-----</div>
+    <div class="online-sub">Compartile este código a tu rival</div>
+    <div class="online-spinner"></div>
+    <div class="online-waiting-msg" id="online-waiting-msg">Esperando al rival...</div>
+    <button class="btn danger" onclick="onlineCancelar()">CANCELAR</button>
+  </div>
+
+  <!-- Estado / errores -->
+  <div class="online-card" id="online-status" style="display:none">
+    <div id="online-status-msg" class="online-msg"></div>
+    <button class="btn" onclick="onlineVolverAlMenu()">VOLVER</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODO MANAGER (club)
+     ══════════════════════════════════════════ -->
+<div id="club-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+  <div id="club-mount"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MESA DE JUEGO (vs IA)
+     ══════════════════════════════════════════ -->
+<div id="mesa">
+  <div class="zona-rival">
+    <div class="rival-top">
+      <img id="rival-avatar" class="rival-avatar rival-anim" src="data:," alt="Rival">
+      <img id="rival-escudo" class="escudo-mini" src="data:," alt="" style="display:none;">
+      <div class="rival-info">
+        <div id="rival-name-txt" class="rival-name-txt">Rival</div>
+        <div id="rival-mano-badge" class="mano-badge" style="display:none">🃏 Mano</div>
+      </div>
+    </div>
+    <div class="hand-row">
+      <div class="mazo-slot" id="mazo-slot-rival"></div>
+      <div class="rival-hand" id="rival-hand"></div>
+    </div>
+  </div>
+
+  <div class="zona-central">
+    <div class="thinking" id="thinking">
+      <span id="thinking-txt">Pensando...</span>
+      <div class="thinking-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <div id="mesa-central">
+      <div id="rondas-panel">
+        <div class="ronda-item"><span class="ronda-lbl">R1</span><span id="r1-ganador" class="ronda-ganador">-</span></div>
+        <div class="ronda-item"><span class="ronda-lbl">R2</span><span id="r2-ganador" class="ronda-ganador">-</span></div>
+        <div class="ronda-item"><span class="ronda-lbl">R3</span><span id="r3-ganador" class="ronda-ganador">-</span></div>
+      </div>
+      <div id="mesa-avatares"></div>
+    </div>
+
+    <div class="played-row" id="played-row">
+      <div id="drop-zone-overlay"></div>
+      <div id="drag-hint">⬆ Soltá aquí para jugar</div>
+      <div class="played-row-rival" id="played-row-rival"></div>
+      <div class="played-row-jugador" id="played-row-jugador"></div>
+    </div>
+
+  </div>
+
+  <div class="info-bar">
+    <div class="info-tantos" id="info-tantos">Tantos: --</div>
+    <div class="info-msg" id="info-msg">¡Bienvenidos al Truco Argentino!</div>
+    <div class="info-mano" id="info-mano">Mano: --</div>
+  </div>
+
+  <div id="zona-inferior">
+    <div class="club-perks-bar" id="club-perks-bar"></div>
+    <div class="acciones" id="acciones"></div>
+    <div class="reactions" id="reactions"></div>
+    <div class="zona-jugador">
+      <div class="hand-row">
+        <div class="mazo-slot" id="mazo-slot-jugador"></div>
+        <div class="player-hand" id="player-hand"></div>
+      </div>
+      <!-- Mazo sobrante: pila decorativa boca abajo. Se mueve por JS al
+           lado (rival/jugador) que sea "mano" en cada mano repartida. -->
+      <div class="mazo-pos" id="mazo-pos" title="Mazo">
+        <div class="mazo-carta dorso-trugol"></div>
+        <div class="mazo-carta dorso-trugol"></div>
+        <div class="mazo-carta dorso-trugol"></div>
+      </div>
+      <div class="player-bottom" style="margin-top:4px;">
+        <img id="player-avatar-sm" class="player-avatar-sm" src="data:," alt="Vos">
+        <img id="player-escudo" class="escudo-mini" src="data:," alt="" style="display:none; margin-left:4px;">
+        <div id="player-mano-badge" class="mano-badge" style="display:none; margin-left:4px;">🃏 Mano</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón menú dentro de la mesa -->
+  <button class="mesa-menu-btn" onclick="irA('main-menu')" title="Menú principal">☰</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RANKING VISIBLE EN JUEGO
+     ══════════════════════════════════════════ -->
+<div id="mesa-ranking" class="mesa-ranking">
+  <div class="ranking-titulo">🏆 TOP</div>
+  <div class="ranking-item ranking-1">
+    <span class="ranking-pos">1</span>
+    <span class="ranking-nombre">Dannnnn</span>
+    <span class="ranking-pts">320</span>
+  </div>
+  <div class="ranking-item ranking-2">
+    <span class="ranking-pos">2</span>
+    <span class="ranking-nombre">PabloVanpeble</span>
+    <span class="ranking-pts">317</span>
+  </div>
+  <div class="ranking-item ranking-3">
+    <span class="ranking-pos">3</span>
+    <span class="ranking-nombre">orlando812</span>
+    <span class="ranking-pts">299</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL LATERAL DE FÓSFOROS
+     ══════════════════════════════════════════ -->
+<div id="side-score">
+  <div class="side-score-inner">
+    <div class="side-score-pts"><span id="side-pts-j">0</span>-<span id="side-pts-r">0</span></div>
+    <div class="side-score-sub">PUNTOS</div>
+    <div class="side-progress-wrap">
+      <div class="side-prog-lbl" id="side-lbl-j">VOS</div>
+      <div class="side-prog-bar-bg"><div class="side-prog-j" id="side-pbar-j" style="width:0%"></div></div>
+      <div class="side-prog-lbl rival" id="side-lbl-r">RIV</div>
+      <div class="side-prog-bar-bg"><div class="side-prog-r" id="side-pbar-r" style="width:0%"></div></div>
+    </div>
+    <div class="side-pts-needed" id="side-pts-needed">F.30</div>
+    <div class="side-stake" id="side-stake" style="display:none"></div>
+    <div class="tant-fosforos">
+      <div class="tant-team-lbl" id="tant-lbl-j">VOS</div>
+      <div class="tant-cuadrados" id="cuadrados-jugador"></div>
+      <div class="tant-sep"></div>
+      <div class="tant-team-lbl rival" id="tant-lbl-r">RIVAL</div>
+      <div class="tant-cuadrados" id="cuadrados-rival"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL DE ACTIVIDAD (log de cantos y jugadas)
+     ══════════════════════════════════════════ -->
+<div id="panel-actividad">
+  <div class="pa-header">⚡ ACTIVIDAD</div>
+  <div class="pa-lista" id="pa-lista"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="envido-overlay">
+  <div class="envido-panel">
+    <div class="envido-title" id="eo-title">ENVIDO</div>
+    <div class="envido-scores">
+      <div class="envido-player">
+        <div class="envido-name" id="eo-name-j">VOS</div>
+        <div class="envido-pts" id="eo-pts-j">0</div>
+        <div class="envido-cards" id="eo-cards-j"></div>
+      </div>
+      <div class="envido-vs">vs</div>
+      <div class="envido-player">
+        <div class="envido-name" id="eo-name-r">RIVAL</div>
+        <div class="envido-pts" id="eo-pts-r">0</div>
+        <div class="envido-cards" id="eo-cards-r"></div>
+      </div>
+    </div>
+    <div class="envido-result" id="eo-res">¡Ganaste!</div>
+    <div class="envido-extra" id="eo-extra"></div>
+  </div>
+</div>
+
+<div id="canto-overlay">
+  <div class="canto-card" id="canto-card">
+    <div class="canto-label" id="canto-label">¡TRUCO!</div>
+    <div class="canto-quien" id="canto-quien">VOS</div>
+  </div>
+</div>
+
+<div id="resultado-overlay">
+  <div class="resultado-card" id="resultado-card">
+    <div class="resultado-titulo" id="resultado-titulo">GANASTE LA MANO</div>
+    <div class="resultado-puntos" id="resultado-puntos">+1</div>
+    <div class="resultado-marcador" id="resultado-marcador">0 - 0</div>
+
+    <div class="resultado-envido-reveal" id="resultado-envido-reveal">
+      <div class="rev-titulo" id="rev-titulo">ENVIDO</div>
+      <div class="rev-cartas">
+        <div class="rev-player">
+          <div class="rev-name" id="rev-name-j">VOS</div>
+          <div class="envido-cards" id="rev-cards-j"></div>
+        </div>
+        <div class="rev-player">
+          <div class="rev-name" id="rev-name-r">RIVAL</div>
+          <div class="envido-cards" id="rev-cards-r"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODALES
+     ══════════════════════════════════════════ -->
+<div class="modal" id="result-modal">
+  <div class="modal-box">
+    <div class="result-header">
+      <img id="result-modal-av" class="result-av" src="data:," alt="Rival">
+      <h2 id="result-title">Fin de la mano</h2>
+    </div>
+    <p id="result-msg"></p>
+    <div class="reveal-grid" id="reveal-grid"></div>
+    <div id="result-buttons"></div>
+  </div>
+</div>
+
+<div class="modal" id="stats-modal">
+  <div class="modal-box">
+    <h2>Estadísticas Generales</h2>
+    <div class="stat-row">Partidas Jugadas: <span class="stat-val" id="st-jugadas">0</span></div>
+    <div class="stat-row">Partidas Ganadas: <span class="stat-val" id="st-ganadas">0</span></div>
+    <div class="stat-row">Partidas Perdidas: <span class="stat-val" id="st-perdidas">0</span></div>
+    <div class="stat-row">Efectividad: <span class="stat-val" id="st-efectividad">0%</span></div>
+    <div class="stat-row">Puntos Totales: <span class="stat-val" id="st-puntos">0</span></div>
+    <div style="margin-top:12px; font-weight:bold; font-size:12px; color:var(--gold);">HISTORIAL RECIENTE</div>
+    <div class="hist-list" id="st-historial"></div>
+    <button class="btn primary" style="margin-top:12px; width:100%;" onclick="closeModal('stats-modal')">CERRAR</button>
+  </div>
+</div>
+
+<div class="modal" id="settings-modal">
+  <div class="modal-box">
+    <h2>Ajustes del Juego</h2>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Regla de la Flor</div><div class="setting-sub">3 cartas del mismo palo: Flor, Contraflor y Contraflor al Resto</div></div>
+      <div class="toggle" id="opt-flor" onclick="toggleOpt('flor')"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Dificultad IA</div><div class="setting-sub" id="ia-dificultad-info">Depende del equipo rival (ranking/fuerza)</div></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Efectos de Sonido</div><div class="setting-sub">Sintetizador de audio nativo</div></div>
+      <div class="toggle" id="opt-sound" onclick="toggleOpt('sound')"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Modo Rápido (15 pts)</div><div class="setting-sub">Partidas a 15 puntos (Chico)</div></div>
+      <div class="toggle" id="opt-fast" onclick="toggleOpt('fast')"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Marcador de Fósforos Lateral</div><div class="setting-sub">Muestra el tanteador a la derecha</div></div>
+      <div class="toggle" id="opt-sidescore" onclick="toggleOpt('sidescore')"></div>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-lbl">Color del Tapete</div>
+        <div class="theme-btns">
+          <div class="theme-dot t-green" id="th-green" onclick="setTheme('green')"></div>
+          <div class="theme-dot t-red"   id="th-red"   onclick="setTheme('red')"></div>
+          <div class="theme-dot t-blue"  id="th-blue"  onclick="setTheme('blue')"></div>
+          <div class="theme-dot t-dark"  id="th-dark"  onclick="setTheme('dark')"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn danger" style="margin-top:12px; font-size:9px;" onclick="resetStats()">RESETEAR DATOS</button>
+    <button class="btn primary" style="margin-top:12px; float:right;" onclick="closeModal('settings-modal')">GUARDAR</button>
+  </div>
+</div>
+
+<div class="modal" id="liga-reglas-modal">
+  <div class="modal-box">
+    <h2>⚽ Reglas de la Liga</h2>
+    <div class="lr-intro">¡Bienvenido, DT! Así se juega el torneo:</div>
+    <div class="lr-item"><span class="lr-ico">🏟️</span><div><b>20 clubes, 19 fechas.</b> El fixture es todos contra todos: cada fecha enfrentás al rival que te toca según el calendario (mirá la pestaña 📅 Fixture).</div></div>
+    <div class="lr-item"><span class="lr-ico">✅</span><div><b>Victoria: 3 puntos + 1 sobre de figuritas.</b> Llegá primero a los 30 (o 15 en modo rápido).</div></div>
+    <div class="lr-item"><span class="lr-ico">🟡</span><div><b>Derrota en las buenas: 1 punto.</b> Si perdés pero pasaste la mitad del tanteador, rescatás un punto (columna DB) y a veces un sobre.</div></div>
+    <div class="lr-item"><span class="lr-ico">❌</span><div><b>Derrota en las malas: 0 puntos.</b> Si te quedás en la primera mitad, te vas sin nada.</div></div>
+    <div class="lr-item"><span class="lr-ico">🎲</span><div><b>Mientras jugás, los otros 18 clubes juegan su fecha</b> según el mismo fixture.</div></div>
+    <div class="lr-item"><span class="lr-ico">🏆</span><div><b>A las 19 fechas, el de más puntos es CAMPEÓN</b> y se lleva 5 sobres + 1 figurita LEYENDA garantizada. Del 2º al 4º: 2 sobres. El resto: 1 sobre.</div></div>
+    <div class="lr-item"><span class="lr-ico">📒</span><div><b>Álbum TRUGOL: 56 figuritas</b> de cracks del fútbol por rango (Leyenda, Oro, Plata, Común). ¡Completalo!</div></div>
+    <button class="btn primary" style="width:100%; margin-top:12px;" onclick="closeModal('liga-reglas-modal')">¡VAMOS, DT!</button>
+  </div>
+</div>
+
+<div class="modal" id="liga-modal">
+  <div class="modal-box">
+    <h2 id="liga-modal-title">🏆 Liga Profesional de Truco</h2>
+    <div class="liga-fecha" id="liga-fecha-lbl">Fecha 0 de 19</div>
+    <div class="liga-tabs">
+      <button class="liga-tab-btn active" id="liga-btn-tabla"   onclick="ligaSetTab('tabla')">📊 TABLA</button>
+      <button class="liga-tab-btn"        id="liga-btn-fixture" onclick="ligaSetTab('fixture')">📅 FIXTURE</button>
+    </div>
+    <div id="liga-tab-tabla">
+      <div class="liga-tabla-wrap" id="liga-tabla"></div>
+      <div class="liga-leyenda">★ Tu club · PG victoria 3 pts · DB derrota en las buenas 1 pt · PP derrota en las malas 0 pts</div>
+    </div>
+    <div id="liga-tab-fixture" style="display:none">
+      <div class="liga-fixture-wrap" id="liga-fixture"></div>
+    </div>
+    <button class="btn" style="margin-top:10px; font-size:9px;" onclick="closeModal('liga-modal'); openModal('liga-reglas-modal')">📜 REGLAS</button>
+    <button class="btn danger" style="margin-top:10px; font-size:9px;" onclick="ligaResetear()">↺ NUEVO TORNEO</button>
+    <button class="btn primary" style="margin-top:10px; float:right;" onclick="closeModal('liga-modal')">CERRAR</button>
+  </div>
+</div>
+
+<div class="modal" id="mundial-modal">
+  <div class="modal-box">
+    <h2 id="mundial-modal-title">🌍 Mundial 2026</h2>
+    <div class="liga-tabs">
+      <button class="liga-tab-btn active" id="mundial-btn-grupos"  onclick="mundialSetTab('grupos')">📊 GRUPOS</button>
+      <button class="liga-tab-btn"        id="mundial-btn-bracket" onclick="mundialSetTab('bracket')">🏆 CUADRO</button>
+    </div>
+    <div id="mundial-tab-grupos">
+      <div id="mundial-grupos"></div>
+      <div class="liga-leyenda">★ Tu selección · PG victoria 3 pts · DB derrota en las buenas 1 pt · PP derrota en las malas 0 pts · Clasifican 1º y 2º (+ mejores 8 terceros)</div>
+    </div>
+    <div id="mundial-tab-bracket" style="display:none">
+      <div id="mundial-bracket-cont"></div>
+    </div>
+    <button class="btn" style="margin-top:10px; font-size:9px;" onclick="closeModal('mundial-modal'); openModal('mundial-reglas-modal')">📜 REGLAS</button>
+    <button class="btn danger" style="margin-top:10px; font-size:9px;" onclick="mundialResetear()">↺ NUEVO MUNDIAL</button>
+    <button class="btn primary" style="margin-top:10px; float:right;" onclick="closeModal('mundial-modal')">CERRAR</button>
+  </div>
+</div>
+
+<div class="modal" id="mundial-reglas-modal">
+  <div class="modal-box">
+    <h2>🌍 Reglas del Mundial 2026</h2>
+    <div class="lr-intro">48 selecciones van por la Copa. Así se juega:</div>
+    <div class="lr-item"><span class="lr-ico">🏟️</span><div><b>12 grupos de 4 equipos, todos contra todos (3 fechas).</b> Jugás solo los partidos de tu selección; el resto se simula.</div></div>
+    <div class="lr-item"><span class="lr-ico">✅</span><div><b>Victoria: 3 puntos + 1 sobre de figuritas.</b> Llegá primero a los 30 (o 15 en modo rápido).</div></div>
+    <div class="lr-item"><span class="lr-ico">🟡</span><div><b>Derrota en las buenas: 1 punto</b> (columna DB) y a veces un sobre extra.</div></div>
+    <div class="lr-item"><span class="lr-ico">❌</span><div><b>Derrota en las malas: 0 puntos.</b></div></div>
+    <div class="lr-item"><span class="lr-ico">🎟️</span><div><b>Clasifican a Dieciseisavos:</b> el 1º y 2º de cada grupo (24) + los 8 mejores terceros (32 en total).</div></div>
+    <div class="lr-item"><span class="lr-ico">🏆</span><div><b>Cuadro de eliminación directa</b> (Dieciseisavos → Octavos → Cuartos → Semis → Final), más un Tercer Puesto. Si quedás eliminado, el resto del Mundial se simula solo.</div></div>
+    <div class="lr-item"><span class="lr-ico">📒</span><div><b>Premios en figuritas:</b> clasificar a octavos, llegar a semis, y sobre todo ser CAMPEÓN (5 sobres + 1 LEYENDA garantizada).</div></div>
+    <button class="btn primary" style="width:100%; margin-top:12px;" onclick="closeModal('mundial-reglas-modal')">¡A POR LA COPA!</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÁLBUM DE FIGURITAS TRUGOL
+     ══════════════════════════════════════════ -->
+<div class="modal" id="album-modal">
+  <div class="modal-box album-box">
+    <h2>📒 Álbum TRUGOL — Leyendas del Truco</h2>
+    <div id="album-progreso"></div>
+    <button class="btn primary album-sobre-btn" id="album-btn-sobre" onclick="figusAbrirSobreUI()">✉️ ABRIR SOBRE (0)</button>
+    <button class="btn respond album-canje-btn" id="album-btn-canje" onclick="figusCanjearUI()">🔄 CANJEAR REPETIDAS (0/5) → +1 SOBRE</button>
+    <div class="album-wrap" id="album-grid"></div>
+    <div class="album-ayuda">Ganá fechas de la liga para conseguir sobres · Campeón del torneo: 5 sobres + 1 LEYENDA garantizada</div>
+    <button class="btn primary" style="margin-top:10px; float:right;" onclick="closeModal('album-modal')">CERRAR</button>
+  </div>
+</div>
+
+<!-- Overlay de apertura de sobre -->
+<div id="sobre-overlay">
+  <div class="sobre-panel">
+    <div class="sobre-titulo">✉️ SOBRE TRUGOL</div>
+    <div class="sobre-sub" id="sobre-sub">¡3 figuritas nuevas!</div>
+    <div class="sobre-cartas" id="sobre-cartas"></div>
+    <button class="btn primary" onclick="figusCerrarSobre()">¡A PEGARLAS!</button>
+  </div>
+</div>
+
+<!-- Overlay de zoom de figurita -->
+<div id="figu-zoom-overlay">
+  <div class="sobre-panel figu-zoom-panel">
+    <div class="figu-zoom-card" id="figu-zoom-card"></div>
+    <div id="figu-zoom-info"></div>
+    <button class="btn primary" onclick="figusCerrarZoom()">CERRAR</button>
+  </div>
+</div>
+
+<div class="modal" id="tutorial-modal">
+  <div class="modal-box">
+    <h2>Reglas del Truco Argentino</h2>
+    <div class="tut-section">
+      <h3>1. Jerarquía de las Cartas (De mayor a menor)</h3>
+      <p>1. Ancho de Espada · 2. Ancho de Basto · 3. Siete de Espada · 4. Siete de Oro · 5. Todos los Tres · 6. Todos los Dos · 7. Anchos falsos (1 de Oro y 1 de Copa) · 8. Sietes falsos (7 de Basto y 7 de Copa) · 9. Sotas (10) · 10. Caballos (11) · 11. Reyes (12) · 12. Seises (6) · 13. Cincos (5) · 14. Cuatros (4)</p>
+    </div>
+    <div class="tut-section">
+      <h3>2. El Envido</h3>
+      <p>Se canta antes de tirar la primera carta. Se puntúa con dos cartas del mismo palo (suma + 20). Figuras valen 0. Cadena: Envido (+2) → Real Envido (+3) → Falta Envido (lo que le falta al que va ganando). No quiero: 1 punto para el que cantó.</p>
+    </div>
+    <div class="tut-section">
+      <h3>3. El Truco</h3>
+      <p>Se puede cantar en cualquier momento. Truco (2 pts) → Retruco (3 pts) → Vale Cuatro (4 pts). Solo sube quien aceptó el nivel anterior. No quiero: nivel cantado − 1 puntos.</p>
+    </div>
+    <button class="btn primary" style="width:100%; margin-top:10px;" onclick="closeModal('tutorial-modal')">¡ENTENDIDO!</button>
+  </div>
+</div>
+
+<!-- Badge sala activa -->
+<div id="casa-badge" onclick="casaAbrirPanel()" title="Sala activa — tocá para gestionar"></div>
+
+<!-- FABs solo visibles en la mesa de juego -->
+<div class="fab-group" id="fab-group" style="display:none">
+  <button class="fab fab-album" title="Álbum de figuritas" onclick="openModal('album-modal')">📒<span id="fab-sobres-badge" class="fab-badge" style="display:none">0</span></button>
+  <button class="fab" title="Liga"          onclick="openModal('liga-modal')">🏆</button>
+  <button class="fab" title="Mundial 2026" onclick="openModal('mundial-modal')">🌍</button>
+  <button class="fab" title="Estadísticas" onclick="openModal('stats-modal')">📊</button>
+  <button class="fab" title="Reglas"        onclick="openModal('tutorial-modal')">📜</button>
+  <button class="fab" title="Ajustes"       onclick="openModal('settings-modal')">⚙️</button>
+  <button class="fab" title="Tienda de fichas"  onclick="tiendaAbrir()"       style="font-size:18px;">🛒</button>
+  <button class="fab" title="Sala de apuestas" onclick="casaAbrirPanel()"    style="font-size:18px;">💰</button>
+  <button class="fab" title="Ranking"          onclick="rankingAbrirModal()" style="font-size:18px;">🏅</button>
+  <button class="fab" title="QR de pago"       onclick="qrAbrirModal()"      style="font-size:18px;">📲</button>
+  <button class="fab" title="Historial"        onclick="historialAbrirModal()" style="font-size:18px;">📋</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: PANEL ORGANIZADOR (Casa TrucoGOL)
+     ══════════════════════════════════════════ -->
+<div class="modal" id="casa-modal">
+  <div class="modal-box" style="max-height:90vh;overflow-y:auto;">
+    <h2>💰 Casa TrucoGOL</h2>
+
+    <!-- CONFIG DEL ORGANIZADOR -->
+    <div class="casa-section">
+      <div class="casa-section-title">⚙️ TUS DATOS (organizador)</div>
+      <label class="settings-label">Tu nombre / apodo</label>
+      <input type="text" id="casa-nombre-inp" class="name-input" placeholder="Ej: Chucho GOL" style="margin-bottom:8px;">
+      <label class="settings-label">Tu alias MP (opcional — solo para el aporte al organizador)</label>
+      <input type="text" id="casa-alias-inp" class="name-input" placeholder="Ej: chucho.trucogol" style="margin-bottom:8px;">
+      <label class="settings-label">Aporte al organizador (%, opcional)</label>
+      <input type="number" id="casa-comision-inp" class="name-input" placeholder="Ej: 0" min="0" max="50" step="1" style="margin-bottom:4px;" value="0">
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px;line-height:1.4;">
+        💡 La plata va <b>directo del perdedor al ganador</b>. Vos no cobrás el pozo. El aporte es una colaboración voluntaria, no una comisión obligatoria.
+      </div>
+      <button class="btn respond" onclick="casaGuardarConfig()" style="width:100%;">GUARDAR MIS DATOS</button>
+    </div>
+
+    <!-- NUEVA SALA -->
+    <div class="casa-section">
+      <div class="casa-section-title">🎯 NUEVA SALA</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <div style="flex:1">
+          <label class="settings-label">Tipo</label>
+          <select id="sala-tipo" class="name-input" style="background:rgba(0,0,0,.4);color:#fff;" onchange="casaTipoChange()">
+            <option value="1v1">Mano a Mano (1v1)</option>
+            <option value="torneo4">Torneo 4 jugadores</option>
+            <option value="torneo6">Torneo 6 jugadores</option>
+          </select>
+        </div>
+        <div style="flex:1">
+          <label class="settings-label">Buy-in por jugador ($)</label>
+          <input type="number" id="sala-buyin" class="name-input" placeholder="Ej: 1000" min="0" step="100" oninput="casaActualizarPozo()">
+        </div>
+      </div>
+      <!-- Preview: riesgo/recompensa por mano (pago DIRECTO, no hay pozo central) -->
+      <div id="sala-pozo-preview" style="
+        background:rgba(200,168,75,.08); border:1px solid rgba(200,168,75,.25);
+        border-radius:8px; padding:9px 8px; margin-bottom:6px;
+        font-family:var(--f-ui,'Oswald',sans-serif); font-size:9px; letter-spacing:.3px;
+        display:flex; justify-content:space-between; align-items:center; text-align:center; gap:4px;
+      ">
+        <span style="color:rgba(255,255,255,.45);flex:1;min-width:0;">ARRIESGÁS<br><b id="pv-arriesga" style="color:#fff;font-size:13px;white-space:nowrap;">$0</b></span>
+        <span style="color:rgba(255,255,255,.45);flex:1;min-width:0;">GANÁS<br><b id="pv-gana" style="color:#2ecc71;font-size:13px;white-space:nowrap;">+$0</b></span>
+        <span style="color:rgba(255,255,255,.45);flex:1;min-width:0;">PERDÉS<br><b id="pv-pierde" style="color:#e74c3c;font-size:13px;white-space:nowrap;">-$0</b></span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:10px;line-height:1.4;">
+        Por cada mano: el que pierde le transfiere el buy-in <b>directo al ganador</b>. Nadie paga por adelantado.<span id="pv-aporte-note" style="display:none;"> Aporte al organizador: <b id="pv-aporte" style="color:var(--gold,#f5c518);"></b> (opcional).</span>
+      </div>
+      <button class="btn primary" onclick="casaCrearSala()" style="width:100%;">✅ CREAR SALA</button>
+    </div>
+
+    <!-- JUGADORES Y CONFIRMACIÓN -->
+    <div class="casa-section" id="sala-jugadores-section">
+      <div class="casa-section-title">👥 JUGADORES</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <input type="text" id="sala-j-nombre" class="name-input" placeholder="Nombre" style="flex:2;" onkeydown="if(event.key==='Enter'){event.preventDefault();casaAgregarJugador()}">
+        <input type="text" id="sala-j-alias"  class="name-input" placeholder="Alias MP" style="flex:2;" onkeydown="if(event.key==='Enter'){event.preventDefault();casaAgregarJugador()}">
+        <button class="btn respond" onclick="casaAgregarJugador()" style="flex:0.9;padding:8px 2px;font-size:11px;">+ Agregar</button>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px;line-height:1.4;">
+        Tocá <b>Confirmar</b> en cada uno cuando esté de acuerdo con la apuesta. <b>Nadie transfiere nada todavía</b> — el que pierde le paga al ganador recién al final.
+      </div>
+      <div id="sala-lista" style="max-height:220px;overflow-y:auto;margin-bottom:8px;"></div>
+      <div id="sala-resumen"></div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+      <button class="btn btn-wa" id="sala-btn-compartir" onclick="casaCompartirInstrucciones()" disabled>
+        📲 Enviar instrucciones de pago por WA
+      </button>
+      <button class="btn primary" id="sala-btn-iniciar" onclick="casaIniciarPartida()" disabled>
+        🎯 TODOS ADENTRO — A JUGAR
+      </button>
+      <button class="btn danger" onclick="casaCerrarSala()" style="display:none;" id="btn-cerrar-sala">
+        🔴 CERRAR SALA
+      </button>
+      <button class="btn" onclick="casaCerrar()">CERRAR PANEL</button>
+    </div>
+
+    <!-- BRACKET DEL TORNEO -->
+    <div id="torneo-bracket-section" style="display:none;margin-top:14px;">
+      <div class="casa-section-title">🏆 BRACKET DEL TORNEO</div>
+      <div id="torneo-bracket"></div>
+      <button class="btn btn-wa" onclick="casaCompartirBracket()" style="width:100%;margin-top:8px;">
+        📲 Compartir bracket por WA
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: PAGO AL GANADOR
+     ══════════════════════════════════════════ -->
+<div class="modal" id="casa-pago-modal">
+  <div class="modal-box">
+    <div class="cp-titulo">🏆 RESULTADO OFICIAL</div>
+    <div class="cp-marcador" id="cp-marcador">0 - 0</div>
+
+    <div class="cp-box">
+      <div class="lbl">GANADOR</div>
+      <div class="ganador" id="cp-ganador">—</div>
+      <div class="lbl" style="margin-top:8px;">RECIBE DE LOS PERDEDORES</div>
+      <div class="pot" id="cp-pot">$0</div>
+      <div class="cp-alias" id="cp-alias"></div>
+    </div>
+
+    <!-- Ledger de cobros: marcá quién te pagó. El que no, queda MOROSO. -->
+    <div id="cp-cobros"></div>
+
+    <div class="cp-box" style="background:rgba(200,168,75,.06);border-color:rgba(200,168,75,.3);">
+      <div class="lbl">APORTE AL ORGANIZADOR (OPCIONAL)</div>
+      <div style="font-family:var(--f-display,'Bebas Neue',sans-serif);font-size:30px;color:var(--gold,#f5c518);" id="cp-comision">—</div>
+    </div>
+
+    <p class="cp-instruccion">
+      ⬆️ Cada perdedor le transfiere el buy-in <b>directo al ganador</b>.<br>
+      Vos no tocás el pozo. Después compartí el resultado al grupo.
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-mp" id="cp-btn-mp" onclick="" style="display:none;">
+        💳 Abrir MP del ganador (para que le paguen)
+      </button>
+      <button class="btn btn-wa" onclick="casaCompartirPago()">
+        📲 Compartir resultado al grupo de WA
+      </button>
+      <button class="btn" onclick="casaPagoCerrar()">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: RANKING DE JUGADORES
+     ══════════════════════════════════════════ -->
+<div class="modal" id="ranking-modal">
+  <div class="modal-box" style="max-height:85vh;overflow-y:auto;">
+    <h2>🏅 Ranking de Jugadores</h2>
+    <div id="rank-lista" style="margin-bottom:14px;"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-wa" onclick="rankingCompartirWA()" style="width:100%;">
+        📲 Compartir ranking por WhatsApp
+      </button>
+      <button class="btn danger" onclick="rankingResetear()" style="width:100%;">
+        🗑 Resetear ranking
+      </button>
+      <button class="btn" onclick="rankingCerrar()" style="width:100%;">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: QR DE PAGO
+     ══════════════════════════════════════════ -->
+<div class="modal" id="qr-modal">
+  <div class="modal-box">
+    <h2>📲 QR de Aporte (opcional)</h2>
+    <p style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:8px;text-align:center;">
+      QR de tu Mercado Pago para el <b>aporte voluntario</b> al organizador.<br>
+      No es el buy-in: el pozo va directo del perdedor al ganador.
+    </p>
+
+    <img id="qr-img" src="" alt="QR MP" width="220" height="220">
+
+    <div class="qr-info">
+      <div class="qr-alias-lbl" id="qr-alias">—</div>
+      <div class="qr-monto-lbl" id="qr-monto">—</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;">
+        Organizador: <span id="qr-nombre">—</span>
+      </div>
+      <a id="qr-link" class="qr-link" href="#" target="_blank" rel="noopener">—</a>
+    </div>
+
+    <div style="display:flex;gap:8px;margin:12px 0 8px;">
+      <input type="number" id="qr-monto-inp" class="name-input"
+             placeholder="Monto personalizado ($)" style="flex:1;"
+             oninput="qrActualizarMonto()">
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-wa" onclick="qrCompartirWA()" style="width:100%;">
+        📲 Compartir link de pago por WA
+      </button>
+      <button class="btn" onclick="qrCerrar()" style="width:100%;">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: HISTORIAL DE SALAS
+     ══════════════════════════════════════════ -->
+<div class="modal" id="historial-modal">
+  <div class="modal-box" style="max-height:85vh;overflow-y:auto;">
+    <h2>📋 Historial de Salas</h2>
+
+    <div class="hist-totales">
+      <span>Total salas: <strong id="hist-total-salas">0</strong></span>
+      <span style="color:var(--gold,#f5c518);">
+        Aportes acumulados: <strong id="hist-total-comision">$0</strong>
+      </span>
+    </div>
+
+    <div id="hist-lista" style="margin:8px 0 14px;max-height:320px;overflow-y:auto;"></div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn danger" onclick="historialLimpiar()" style="width:100%;">
+        🗑 Borrar historial
+      </button>
+      <button class="btn" onclick="historialCerrar()" style="width:100%;">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<script defer src="cartas.js"></script>
+<script defer src="sim.js"></script>
+<script defer src="netClient.js"></script>
+<script defer src="juego.js"></script>
+<script defer src="juego2v2.js"></script>
+<script defer src="juego2v2_ui.js"></script>
+<script defer src="juego2v2_online.js"></script>
+<script defer src="ia.js"></script>
+<script defer src="juego_ui.js"></script>
+<script defer src="anotador.js"></script>
+<script defer src="equipos.js"></script>
+<script defer src="liga.js"></script>
+<script defer src="mundial.js"></script>
+<script defer src="figuritas.js"></script>
+<script defer src="torneo.js"></script>
+<script defer src="copas.js"></script>
+<script defer src="nivel.js"></script>
+<script defer src="club.js"></script>
+<script defer src="tribuna.js"></script>
+<script defer src="juego_online.js"></script>
+<script defer src="motor_online.js"></script>
+<script defer src="apuesta.js"></script>
+<script defer src="tienda.js"></script>
+<script defer src="extras.js"></script>
+<script defer src="features_storage.js"></script>
+<script defer src="features_ui.js"></script>
+<script defer src="features_gameplay.js"></script>
+<script defer src="features_progression.js"></script>
+<script defer src="saldoServer.js"></script>
+<script defer src="features_historia.js"></script>
+<script defer src="features_extra.js"></script>
+<script defer src="features_adaptive.js"></script>
+<script defer src="features_torneo_plus.js"></script>
+<script defer src="features_ambiente.js"></script>
+<script defer src="features_visual.js"></script>
+<script defer src="features_modos.js"></script>
+<script defer src="features_contenido.js"></script>
+<script defer src="features_pwa.js"></script>
+
+<!-- ══════════════════════════════════════════
+     DORSO TRUGOL (Selección Argentina)
+     Usa DORSO_URI definido en cartas.js y lo aplica
+     automáticamente a toda carta boca abajo del rival.
+     ══════════════════════════════════════════ -->
+<script>
+(function () {
+  // Los scripts del motor cargan con `defer` (no bloquean el parseo del
+  // HTML), así que recién existen cuando termina de parsearse el documento
+  // — por eso el chequeo de DORSO_URI y todo lo demás vive adentro de
+  // DOMContentLoaded, no suelto a nivel del script (si no, esto corría
+  // ANTES que cartas.js y el dorso quedaba sin aplicar para siempre).
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof DORSO_URI === "undefined") {
+      console.warn("DORSO_URI no encontrado: actualizá cartas.js con la versión que incluye el dorso TRUGOL.");
+      return;
+    }
+
+    // Estilos del dorso (pisan cualquier dorso anterior)
+    const st = document.createElement("style");
+    st.textContent = `
+      .dorso-trugol {
+        background-image: url("${DORSO_URI}") !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        border-radius: 8px;
+        box-shadow: 0 4px 14px rgba(0,0,0,.45);
+      }
+      /* Oculta los pips/números del dorso viejo sin romper el layout */
+      .dorso-trugol * { visibility: hidden; }
+    `;
+    document.head.appendChild(st);
+
+    // Aplica el dorso a cada carta de la mano del rival, ahora y cada vez que se redibuje
+    function vestirRival() {
+      const rh = document.getElementById("rival-hand");
+      if (!rh) return;
+      [...rh.children].forEach(c => c.classList.add("dorso-trugol"));
+    }
+
+    vestirRival();
+    const rh = document.getElementById("rival-hand");
+    if (rh) new MutationObserver(vestirRival).observe(rh, { childList: true });
+  });
+})();
+</script>
+</body>
+</html>
