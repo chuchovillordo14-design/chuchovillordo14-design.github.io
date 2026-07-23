@@ -105,6 +105,9 @@
     background:url("assets/logo_sm_celeste.png") center/contain no-repeat;
   }
   .card-prod .foto img{position:relative;z-index:1;max-height:100%;object-fit:contain;filter:drop-shadow(0 14px 20px rgba(0,0,0,.45))}
+  .card-prod .foto.foto-real{background:linear-gradient(160deg, #E9EDF1, #D7DEE5);padding:0}
+  .card-prod .foto.foto-real::before,.card-prod .foto.foto-real::after{display:none}
+  .card-prod .foto.foto-real img{width:100%;height:100%;object-fit:cover;filter:none}
   .card-prod .info{padding:16px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
   .card-prod h3{font-size:.98rem;font-family:'Inter';font-weight:800}
   .card-prod .desc{color:var(--gris);font-size:.85rem;flex:1}
@@ -206,6 +209,7 @@
 
 <footer>
   TIENDA SUBLIMAIT — Diseños exclusivos para sublimación · General Pinedo, Chaco · <a href="../index.html">Ver sitio para equipos y clubes</a>
+  <br><span style="opacity:.6">Mockups fotográficos: <a href="https://www.anthonyboyd.graphics/" target="_blank" rel="noopener">Anthony Boyd Graphics</a></span>
 </footer>
 
 <script>
@@ -216,13 +220,14 @@ const ESTILOS = {
   retro:   "RETRO — bastones con filete dorado",
 };
 
-function itemsEstilo(cat, archivo, precio, descBase, tagsExtra) {
+function itemsEstilo(cat, archivo, precio, descBase, tagsExtra, real) {
   return Object.entries(ESTILOS).map(([est, nombreEst]) => ({
     cat, nombre: nombreEst.split(" — ")[0] + " " + cat,
     desc: descBase,
     precio,
     img: `assets/productos/${est}_${archivo}`,
     tags: [cat.toLowerCase(), est, ...tagsExtra],
+    real,
   }));
 }
 
@@ -240,9 +245,9 @@ const CATEGORIAS = [
 ];
 
 const PRODUCTOS = [
-  ...itemsEstilo("Tazas", "taza.png", null, "Taza cerámica 325ml, diseño de casa sublimado a color completo.", ["mug", "regalo"]),
+  ...itemsEstilo("Tazas", "taza.jpg", null, "Taza cerámica 325ml, diseño de casa sublimado a color completo.", ["mug", "regalo"], true),
   ...itemsEstilo("Remeras", "remera.png", 17000, "Remera sublimada, molde real validado, talles 4 al 5XL.", ["camiseta", "deportes"]),
-  ...itemsEstilo("Almohadones", "almohadon.png", null, "Almohadón 40x40cm, funda sublimada de ambos lados.", ["cojin", "decoracion"]),
+  ...itemsEstilo("Almohadones", "almohadon.jpg", null, "Almohadón 40x40cm, funda sublimada de ambos lados.", ["cojin", "decoracion"], true),
   ...itemsEstilo("Mates", "mate.svg", null, "Mate sublimado, diseño de casa a color completo.", ["termo"]),
   ...itemsEstilo("Botellas", "botella.svg", null, "Botella deportiva sublimada 500ml.", ["deportes", "gym"]),
   ...itemsEstilo("Llaveros", "llavero.svg", null, "Llavero acrílico con diseño sublimado.", ["regalo"]),
@@ -277,7 +282,7 @@ function tarjeta(p) {
   const href = p.link ? p.link : `https://wa.me/${WSP}?text=${msg}`;
   const target = p.link ? "" : 'target="_blank" rel="noopener"';
   return `<div class="card-prod" data-tags="${p.tags.join(" ")} ${p.nombre.toLowerCase()} ${p.cat.toLowerCase()}">
-    <div class="foto"><img src="${p.img}" alt="${p.nombre}" loading="lazy"></div>
+    <div class="foto${p.real ? " foto-real" : ""}"><img src="${p.img}" alt="${p.nombre}" loading="lazy"></div>
     <div class="info">
       <h3>${p.nombre}</h3>
       <p class="desc">${p.desc}</p>
