@@ -89,8 +89,22 @@
   .grid-prod{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
   .card-prod{background:var(--panel);border:1px solid var(--borde);border-radius:14px;overflow:hidden;transition:border-color .2s, transform .2s;display:flex;flex-direction:column}
   .card-prod:hover{border-color:var(--celeste);transform:translateY(-3px)}
-  .card-prod .foto{background:#fff;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:16px}
-  .card-prod .foto img{max-height:100%;object-fit:contain}
+  .card-prod .foto{
+    position:relative;overflow:hidden;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:22px;
+    background:
+      radial-gradient(120% 90% at 78% 8%, rgba(41,171,226,.28), transparent 60%),
+      radial-gradient(90% 70% at 10% 100%, rgba(41,171,226,.14), transparent 65%),
+      linear-gradient(160deg, #0F1620, #080B10);
+  }
+  .card-prod .foto::before{
+    content:"";position:absolute;inset:0;opacity:.5;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='52' viewBox='0 0 30 52'%3E%3Cpolygon points='15,0 30,8.7 30,26 15,34.7 0,26 0,8.7' fill='none' stroke='%23223042' stroke-width='1'/%3E%3C/svg%3E");
+  }
+  .card-prod .foto::after{
+    content:"";position:absolute;left:12px;bottom:10px;width:26px;height:26px;pointer-events:none;opacity:.16;
+    background:url("assets/logo_sm_celeste.png") center/contain no-repeat;
+  }
+  .card-prod .foto img{position:relative;z-index:1;max-height:100%;object-fit:contain;filter:drop-shadow(0 14px 20px rgba(0,0,0,.45))}
   .card-prod .info{padding:16px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
   .card-prod h3{font-size:.98rem;font-family:'Inter';font-weight:800}
   .card-prod .desc{color:var(--gris);font-size:.85rem;flex:1}
