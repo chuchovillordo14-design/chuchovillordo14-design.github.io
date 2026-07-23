@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUBLIMAIT — Sublimación &amp; Estampado | General Pinedo, Chaco</title>
+<meta name="description" content="Indumentaria deportiva sublimada y diseños listos para sublimar. Camisetas, musculosas y shorts con nombre y número, en todos los talles. General Pinedo, Chaco.">
+<link rel="icon" type="image/png" href="assets/logo_sm_celeste.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --negro:#0B0E13;
+    --panel:#131821;
+    --borde:#222B38;
+    --celeste:#29ABE2;
+    --celeste-claro:#7FD4FF;
+    --blanco:#F2F5F7;
+    --gris:#8A94A3;
+    --plata-a:#E6E9ED;
+    --plata-b:#98A0AA;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--negro);color:var(--blanco);font-family:'Inter',system-ui,Segoe UI,Arial,sans-serif;line-height:1.6}
+  h1,h2,h3,.brand{font-family:'Archivo Black','Arial Black',Arial,sans-serif;line-height:1.15}
+  img{max-width:100%;display:block}
+  a{color:var(--celeste);text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:rgba(11,14,19,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--borde)}
+  .nav-inner{display:flex;align-items:center;gap:14px;padding:12px 20px;max-width:1100px;margin:0 auto}
+  .nav-inner img{height:38px;width:auto}
+  .brand{font-size:1.15rem;letter-spacing:.5px}
+  .brand span{color:var(--celeste)}
+  .nav-links{margin-left:auto;display:flex;gap:22px;align-items:center;font-weight:600;font-size:.95rem}
+  .nav-links a{color:var(--blanco)}
+  .nav-links a:hover{color:var(--celeste-claro)}
+  .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:800;letter-spacing:.3px;transition:transform .15s, box-shadow .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-wsp{background:#22C15E;color:#04140A}
+  .btn-wsp:hover{box-shadow:0 8px 24px rgba(34,193,94,.35)}
+  .btn-cel{background:var(--celeste);color:#04121C}
+  .btn-cel:hover{box-shadow:0 8px 24px rgba(41,171,226,.35)}
+  .btn-ghost{border:2px solid var(--borde);color:var(--blanco)}
+  .btn-ghost:hover{border-color:var(--celeste)}
+  .nav-links .btn{padding:9px 16px;font-size:.9rem}
+
+  /* HERO */
+  header{position:relative;overflow:hidden;border-bottom:1px solid var(--borde)}
+  .hero-glow{position:absolute;inset:0;background:
+    radial-gradient(600px 300px at 85% 15%, rgba(41,171,226,.16), transparent 65%),
+    radial-gradient(500px 260px at 10% 90%, rgba(41,171,226,.10), transparent 60%)}
+  .hero-marca{position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:520px;opacity:.05;pointer-events:none}
+  .hero{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:72px 20px 64px}
+  .hero img.lockup{width:min(340px,70vw);margin-bottom:28px}
+  .hero .tag{color:var(--celeste);letter-spacing:6px;font-weight:800;font-size:.95rem;margin-bottom:18px}
+  .hero h1{font-size:clamp(1.6rem,4.2vw,2.8rem);max-width:820px}
+  .hero h1 em{font-style:normal;color:var(--celeste)}
+  .hero p.sub{color:var(--gris);max-width:640px;margin:18px 0 30px;font-size:1.05rem}
+  .hero .ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+  /* SECCIONES */
+  section{padding:64px 0}
+  .sec-title{font-size:clamp(1.4rem,3vw,2rem);margin-bottom:8px}
+  .sec-title span{color:var(--celeste)}
+  .sec-sub{color:var(--gris);margin-bottom:36px;max-width:680px}
+
+  .grid{display:grid;gap:20px}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:26px;transition:border-color .2s, transform .2s}
+  .card:hover{border-color:var(--celeste);transform:translateY(-3px)}
+  .card .ico{font-size:1.8rem;margin-bottom:12px}
+  .card h3{font-size:1.05rem;margin-bottom:10px}
+  .card p{color:var(--gris);font-size:.95rem}
+
+  /* GALERIA */
+  .galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .obra{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--borde);background:#fff;aspect-ratio:1/1;transition:transform .2s, border-color .2s}
+  .obra:hover{transform:translateY(-3px);border-color:var(--celeste)}
+  .obra img{width:100%;height:100%;object-fit:cover}
+  .obra .pie{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent, rgba(6,8,12,.92));padding:26px 14px 10px;color:#fff}
+  .obra .pie b{display:block;font-family:'Archivo Black',Arial,sans-serif;font-size:.85rem;letter-spacing:.3px}
+  .obra .pie span{color:var(--celeste-claro);font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase}
+
+  /* PACKS */
+  .pack{background:var(--panel);border:1px solid var(--borde);border-radius:14px;overflow:hidden;transition:border-color .2s, transform .2s}
+  .pack:hover{border-color:var(--celeste);transform:translateY(-3px)}
+  .pack .marco{background:#fff;padding:18px;display:flex;justify-content:center}
+  .pack img{height:260px;width:auto}
+  .pack .info{padding:20px 22px}
+  .pack h3{font-size:1rem;margin-bottom:6px}
+  .pack p{color:var(--gris);font-size:.9rem}
+  .pack .chip{display:inline-block;margin-top:12px;background:rgba(41,171,226,.12);color:var(--celeste-claro);border:1px solid rgba(41,171,226,.35);border-radius:99px;padding:4px 12px;font-size:.78rem;font-weight:600}
+
+  /* DIFERENCIAL */
+  .pasos{counter-reset:paso}
+  .paso{display:flex;gap:18px;align-items:flex-start;padding:18px 0;border-bottom:1px solid var(--borde)}
+  .paso:last-child{border-bottom:none}
+  .paso .num{counter-increment:paso;flex:0 0 46px;height:46px;border-radius:12px;background:rgba(41,171,226,.12);border:1px solid rgba(41,171,226,.4);display:flex;align-items:center;justify-content:center;font-family:'Archivo Black',Arial,sans-serif;color:var(--celeste)}
+  .paso .num::before{content:counter(paso)}
+  .paso h3{font-size:1rem;margin-bottom:4px}
+  .paso p{color:var(--gris);font-size:.95rem}
+
+  /* TALLES */
+  .talles-box{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:30px}
+  .talles-row{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px}
+  .talle{background:var(--negro);border:1px solid var(--borde);border-radius:8px;padding:8px 14px;font-weight:800;font-family:'Archivo Black',Arial,sans-serif;font-size:.85rem}
+  .talle.destacado{border-color:var(--celeste);color:var(--celeste)}
+  .talles-box .nota{color:var(--gris);font-size:.9rem;margin-top:16px}
+
+  /* CONTACTO */
+  .contacto{background:linear-gradient(180deg, var(--panel), var(--negro));border-top:1px solid var(--borde);text-align:center}
+  .contacto img{width:120px;margin:0 auto 20px}
+  .contacto .datos{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;margin:26px 0;color:var(--gris);font-weight:600}
+  .contacto .datos span b{color:var(--blanco)}
+  footer{border-top:1px solid var(--borde);padding:22px 20px;text-align:center;color:var(--gris);font-size:.85rem}
+
+  @media (max-width:720px){
+    .nav-links a:not(.btn){display:none}
+    .pack img{height:200px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <img src="assets/logo_sm_celeste.png" alt="SUBLIMAIT">
+    <div class="brand">SUBLIM<span>AIT</span></div>
+    <div class="nav-links">
+      <a href="#trabajos">Trabajos</a>
+      <a href="#packs">Packs</a>
+      <a href="#talles">Talles</a>
+      <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!%20Quiero%20hacer%20una%20consulta." target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-glow"></div>
+  <img class="hero-marca" src="assets/logo_sm_blanco.png" alt="">
+  <div class="hero">
+    <img class="lockup" src="assets/logo_lockup_blanco.png" alt="SUBLIMAIT">
+    <div class="tag">SUBLIMACIÓN &amp; ESTAMPADO</div>
+    <h1>Tu equipo, <em>con nombre y número</em>, del talle 4 al 5XL.</h1>
+    <p class="sub">Indumentaria deportiva personalizada y diseños listos para sublimar. Moldería propia validada en todos los talles. Desde General Pinedo, Chaco, para todo el país.</p>
+    <div class="ctas">
+      <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!%20Quiero%20cotizar%20indumentaria%20para%20mi%20equipo." target="_blank" rel="noopener">Cotizá tu equipo</a>
+      <a class="btn btn-ghost" href="#packs">Ver packs de diseño</a>
+    </div>
+  </div>
+</header>
+
+<section id="servicios">
+  <div class="wrap">
+    <h2 class="sec-title">Qué <span>hacemos</span></h2>
+    <p class="sec-sub">Del diseño a la prenda terminada. Todo el proceso en un solo lugar.</p>
+    <div class="grid g4">
+      <div class="card">
+        <div class="ico">👕</div>
+        <h3>Indumentaria por equipo</h3>
+        <p>Camisetas, musculosas y shorts de fútbol y básquet. Cada jugador con su nombre, número y talle exacto.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📐</div>
+        <h3>Todos los talles, de verdad</h3>
+        <p>Moldería propia validada del talle 4 al 5XL. Medidas reales por talle, no un molde estirado.</p>
+      </div>
+      <div class="card">
+        <div class="ico">☕</div>
+        <h3>Tazas, gorras y más</h3>
+        <p>Tazas, gorras, pilusos, banderas, llaveros y regalos personalizados para fechas especiales.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📦</div>
+        <h3>Packs digitales</h3>
+        <p>Diseños listos para sublimar con la moldería en todos los talles incluida. Para colegas sublimadores.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trabajos" style="background:var(--panel);border-top:1px solid var(--borde);border-bottom:1px solid var(--borde)">
+  <div class="wrap">
+    <h2 class="sec-title">Trabajos <span>reales</span></h2>
+    <p class="sec-sub">Más de 240 clubes, escuelas, gimnasios y equipos de la región ya vistieron diseños nuestros. Una muestra:</p>
+    <div class="galeria">
+      <div class="obra"><img src="assets/galeria/g01_ferro.jpg" alt="Conjunto Ferro" loading="lazy"><div class="pie"><span>Fútbol</span><b>Ferro — Gral. Pinedo</b></div></div>
+      <div class="obra"><img src="assets/galeria/g02_yalovera.jpg" alt="Kit completo" loading="lazy"><div class="pie"><span>Fútbol</span><b>Kit titular completo</b></div></div>
+      <div class="obra"><img src="assets/galeria/g03_union_femenino.jpg" alt="Unión femenino" loading="lazy"><div class="pie"><span>Fútbol femenino</span><b>Unión</b></div></div>
+      <div class="obra"><img src="assets/galeria/g04_fut_femenino.jpg" alt="Pantera Sub 14" loading="lazy"><div class="pie"><span>Fútbol femenino</span><b>Sub 14 — arte pantera</b></div></div>
+      <div class="obra"><img src="assets/galeria/g05_pacho_f5.jpg" alt="Pacho F5" loading="lazy"><div class="pie"><span>Fútbol 5</span><b>Pacho F5</b></div></div>
+      <div class="obra"><img src="assets/galeria/g06_chaco_forever.jpg" alt="Chaco Forever" loading="lazy"><div class="pie"><span>Fútbol</span><b>Con sponsors</b></div></div>
+      <div class="obra"><img src="assets/galeria/g07_comparsa.jpg" alt="Comparsa" loading="lazy"><div class="pie"><span>Eventos</span><b>Grupo Carroza</b></div></div>
+      <div class="obra"><img src="assets/galeria/g08_ferro_voley.jpg" alt="Ferro Vóley" loading="lazy"><div class="pie"><span>Vóley</span><b>Ferro Vóley dama</b></div></div>
+      <div class="obra"><img src="assets/galeria/g09_sportivo_charata.jpg" alt="Sportivo Charata" loading="lazy"><div class="pie"><span>Arquero</span><b>Sportivo Charata</b></div></div>
+      <div class="obra"><img src="assets/galeria/g10_atletico_hockey.jpg" alt="Plantel hockey" loading="lazy"><div class="pie"><span>Hockey</span><b>Plantel completo con nombres</b></div></div>
+      <div class="obra"><img src="assets/galeria/g11_gancedo_basquet.jpg" alt="Sportivo Gancedo" loading="lazy"><div class="pie"><span>Básquet</span><b>Sportivo Gancedo</b></div></div>
+      <div class="obra"><img src="assets/galeria/g12_escuela161.jpg" alt="Escuela 161" loading="lazy"><div class="pie"><span>Escuelas</span><b>E.E.P. N°161 — chombas</b></div></div>
+      <div class="obra"><img src="assets/galeria/g13_fuerzax.jpg" alt="Fuerza X" loading="lazy"><div class="pie"><span>Gimnasios</span><b>Fuerza X Gym</b></div></div>
+      <div class="obra"><img src="assets/galeria/g14_stargym.jpg" alt="Star Gym" loading="lazy"><div class="pie"><span>Gimnasios</span><b>Star Gym — staff</b></div></div>
+      <div class="obra"><img src="assets/galeria/g15_autismo.jpg" alt="Concientización autismo" loading="lazy"><div class="pie"><span>Causas</span><b>Concientización TEA</b></div></div>
+      <div class="obra"><img src="assets/galeria/g16_coliseo_bochas.jpg" alt="El Coliseo bochas" loading="lazy"><div class="pie"><span>Bochas</span><b>El Coliseo — Charata</b></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="packs">
+  <div class="wrap">
+    <h2 class="sec-title">Pack Piloto <span>N°1</span></h2>
+    <p class="sec-sub">Diseños concept 100% propios y editables. Cada pack incluye el arte vectorial + la moldería del talle 4 al 5XL, lista para imprimir. Lo que nadie más te da.</p>
+    <div class="grid g3">
+      <div class="pack">
+        <div class="marco"><img src="assets/preview_arte_01_litoral.png" alt="Diseño Litoral"></div>
+        <div class="info">
+          <h3>LITORAL</h3>
+          <p>Cintas de agua sobre petróleo con guarda geométrica. Identidad del norte.</p>
+          <span class="chip">Arte + moldería 4→5XL</span>
+        </div>
+      </div>
+      <div class="pack">
+        <div class="marco" style="background:#17171c"><img src="assets/preview_arte_02_carbono.png" alt="Diseño Carbono"></div>
+        <div class="info">
+          <h3>CARBONO</h3>
+          <p>Textura hexagonal con trazos neón. El estilo que pide el básquet y el gaming.</p>
+          <span class="chip">Arte + moldería 4→5XL</span>
+        </div>
+      </div>
+      <div class="pack">
+        <div class="marco"><img src="assets/preview_arte_03_retro.png" alt="Diseño Retro"></div>
+        <div class="info">
+          <h3>RETRO CLÁSICO</h3>
+          <p>Bastones con filete dorado y grano vintage. El clásico que nunca falla.</p>
+          <span class="chip">Arte + moldería 4→5XL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="proceso">
+  <div class="wrap">
+    <h2 class="sec-title">De la lista de jugadores <span>a la tela</span></h2>
+    <p class="sec-sub">Automatizamos lo que otros hacen a mano. Menos errores, entrega más rápida.</p>
+    <div class="pasos">
+      <div class="paso">
+        <div class="num"></div>
+        <div><h3>Nos pasás tu escudo, colores y la lista</h3><p>Nombre, número y talle de cada jugador. Con eso alcanza.</p></div>
+      </div>
+      <div class="paso">
+        <div class="num"></div>
+        <div><h3>Ves tu camiseta antes de imprimir</h3><p>Te mandamos el mockup con tu diseño aplicado. Aprobás o pedís cambios.</p></div>
+      </div>
+      <div class="paso">
+        <div class="num"></div>
+        <div><h3>Cada prenda se genera en su talle exacto</h3><p>El sistema escala el diseño a la medida real de cada talle y arma el tizado optimizado.</p></div>
+      </div>
+      <div class="paso">
+        <div class="num"></div>
+        <div><h3>Sublimamos y entregamos</h3><p>Prenda terminada con tu nombre y número. Sin sorpresas de talle.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="talles" style="background:var(--panel);border-top:1px solid var(--borde);border-bottom:1px solid var(--borde)">
+  <div class="wrap">
+    <h2 class="sec-title">Talles <span>reales</span></h2>
+    <p class="sec-sub">Moldería propia medida y validada. Niños y adultos.</p>
+    <div class="talles-box">
+      <strong>Niños</strong>
+      <div class="talles-row">
+        <span class="talle">4</span><span class="talle">6</span><span class="talle">8</span><span class="talle">10</span><span class="talle">12</span><span class="talle">14</span><span class="talle">16</span>
+      </div>
+      <strong style="display:block;margin-top:14px">Adultos</strong>
+      <div class="talles-row">
+        <span class="talle">S</span><span class="talle">M</span><span class="talle">L</span><span class="talle">XL</span><span class="talle destacado">2XL</span><span class="talle destacado">3XL</span><span class="talle destacado">4XL</span><span class="talle destacado">5XL</span>
+      </div>
+      <p class="nota">¿Necesitás la tabla de medidas completa? Pedila por WhatsApp y te la mandamos al toque.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contacto" id="contacto">
+  <div class="wrap">
+    <img src="assets/logo_sm_blanco.png" alt="SUBLIMAIT">
+    <h2 class="sec-title">Hablemos de tu <span>próximo equipo</span></h2>
+    <div class="datos">
+      <span>📍 <b>General Pinedo, Chaco</b></span>
+      <span>📷 <a href="https://www.instagram.com/subl.mait" target="_blank" rel="noopener">@subl.mait</a></span>
+      <span>📘 <b>Sublimaciones Sublmait</b></span>
+      <span>📞 <b>3731 623985</b></span>
+    </div>
+    <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!" target="_blank" rel="noopener">Escribinos por WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  SUBLIMAIT — Sublimación &amp; Estampado · General Pinedo, Chaco · Hecho con moldería propia 🇦🇷
+</footer>
+
+</body>
+</html>
