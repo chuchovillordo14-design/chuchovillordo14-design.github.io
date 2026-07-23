@@ -63,9 +63,9 @@
     radial-gradient(600px 300px at 85% 15%, rgba(41,171,226,.16), transparent 65%),
     radial-gradient(500px 260px at 10% 90%, rgba(41,171,226,.10), transparent 60%)}
   .hero-marca{position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:520px;opacity:.05;pointer-events:none}
-  .hero{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:72px 20px 64px}
-  .hero img.lockup{width:min(340px,70vw);margin-bottom:28px}
-  .hero .tag{color:var(--celeste);letter-spacing:6px;font-weight:800;font-size:.95rem;margin-bottom:18px}
+  .hero{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:44px 20px 52px}
+  .hero img.lockup{width:min(210px,45vw);margin-bottom:18px}
+  .hero .tag{color:var(--celeste);letter-spacing:6px;font-weight:800;font-size:.85rem;margin-bottom:14px}
   .hero h1{font-size:clamp(1.6rem,4.2vw,2.8rem);max-width:820px}
   .hero h1 em{font-style:normal;color:var(--celeste)}
   .hero p.sub{color:var(--gris);max-width:640px;margin:18px 0 30px;font-size:1.05rem}
@@ -90,7 +90,7 @@
   .galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
   .obra{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--borde);background:#fff;aspect-ratio:1/1;transition:transform .2s, border-color .2s}
   .obra:hover{transform:translateY(-3px);border-color:var(--celeste)}
-  .obra img{width:100%;height:100%;object-fit:cover}
+  .obra img{width:100%;height:100%;object-fit:contain;padding:6px;box-sizing:border-box}
   .obra .pie{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent, rgba(6,8,12,.92));padding:26px 14px 10px;color:#fff}
   .obra .pie b{display:block;font-family:'Archivo Black',Arial,sans-serif;font-size:.85rem;letter-spacing:.3px}
   .obra .pie span{color:var(--celeste-claro);font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase}
@@ -188,8 +188,8 @@
     <h1>Tu equipo, <em>con nombre y número</em>, del talle 4 al 5XL.</h1>
     <p class="sub">Indumentaria deportiva personalizada y diseños listos para sublimar. Moldería propia validada en todos los talles. Desde General Pinedo, Chaco, para todo el país.</p>
     <div class="ctas">
-      <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!%20Quiero%20cotizar%20indumentaria%20para%20mi%20equipo." target="_blank" rel="noopener">Cotizá tu equipo</a>
-      <a class="btn btn-ghost" href="#packs">Ver packs de diseño</a>
+      <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!%20Quiero%20cotizar%20indumentaria%20para%20mi%20equipo." target="_blank" rel="noopener">⚽ Para tu equipo o club</a>
+      <a class="btn btn-cel" href="#packs">🧵 Para colegas sublimadores</a>
     </div>
   </div>
 </header>
@@ -326,7 +326,17 @@
       <div class="talles-row">
         <span class="talle">S</span><span class="talle">M</span><span class="talle">L</span><span class="talle">XL</span><span class="talle destacado">2XL</span><span class="talle destacado">3XL</span><span class="talle destacado">4XL</span><span class="talle destacado">5XL</span>
       </div>
-      <p class="nota">¿Necesitás la tabla de medidas completa? Pedila por WhatsApp y te la mandamos al toque.</p>
+      <details style="margin-top:18px">
+        <summary style="cursor:pointer;color:var(--celeste);font-weight:800;font-size:.95rem">📐 Ver tabla de medidas completa (camisetas)</summary>
+        <div style="overflow-x:auto;margin-top:14px">
+          <table style="border-collapse:collapse;width:100%;font-size:.88rem;text-align:center">
+            <tr style="color:var(--celeste)"><th style="padding:6px 8px;border-bottom:1px solid var(--borde);text-align:left">Talle</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">4</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">6</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">8</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">10</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">12</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">14</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">16</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">S</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">M</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">L</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">XL</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">2XL</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">3XL</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">4XL</th><th style="padding:6px 8px;border-bottom:1px solid var(--borde)">5XL</th></tr>
+            <tr><td style="padding:6px 8px;text-align:left;color:var(--gris)">Ancho (cm)</td><td>39</td><td>41</td><td>43</td><td>45</td><td>47</td><td>49</td><td>51</td><td>54</td><td>56</td><td>58</td><td>61</td><td>63</td><td>66</td><td>69</td><td>72</td></tr>
+            <tr><td style="padding:6px 8px;text-align:left;color:var(--gris)">Largo (cm)</td><td>49</td><td>52</td><td>55</td><td>58</td><td>60</td><td>63</td><td>71</td><td>74</td><td>77</td><td>80</td><td>83</td><td>85</td><td>86</td><td>90</td><td>90</td></tr>
+          </table>
+        </div>
+        <p class="nota" style="margin-top:10px">Medidas del cuerpo de la prenda, validadas en producción. ¿Dudas con un talle? Escribinos.</p>
+      </details>
     </div>
   </div>
 </section>
