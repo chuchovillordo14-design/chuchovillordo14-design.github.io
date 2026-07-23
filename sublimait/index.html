@@ -112,6 +112,28 @@
   .talle.destacado{border-color:var(--celeste);color:var(--celeste)}
   .talles-box .nota{color:var(--gris);font-size:.9rem;margin-top:16px}
 
+  /* COTIZADOR */
+  .cotizador{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:28px;max-width:760px;margin:0 auto}
+  .cotizador label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px;color:var(--blanco)}
+  .cotizador select,.cotizador input[type=number],.cotizador input[type=text]{width:100%;background:var(--negro);border:1px solid var(--borde);border-radius:10px;color:var(--blanco);padding:12px 14px;font-size:1rem;font-family:inherit}
+  .cotizador select:focus,.cotizador input:focus{outline:none;border-color:var(--celeste)}
+  .cot-fila{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+  .cot-check{display:flex;align-items:center;gap:10px;margin-top:14px;color:var(--gris);font-weight:600;font-size:.92rem}
+  .cot-check input{width:18px;height:18px;accent-color:var(--celeste)}
+  .cot-agregar{margin-top:18px;width:100%;background:transparent;border:2px dashed var(--borde);color:var(--celeste);border-radius:10px;padding:12px;font-weight:800;font-size:.95rem;cursor:pointer;font-family:inherit}
+  .cot-agregar:hover{border-color:var(--celeste)}
+  .cot-items{margin-top:18px;border-top:1px solid var(--borde)}
+  .cot-item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--borde);font-size:.92rem}
+  .cot-item .det{color:var(--gris)}
+  .cot-item .precio{white-space:nowrap;font-weight:800}
+  .cot-item button{background:none;border:none;color:#E0556B;cursor:pointer;font-size:1rem;padding:0 4px}
+  .cot-total{display:flex;justify-content:space-between;padding:16px 0 6px;font-family:'Archivo Black',Arial,sans-serif;font-size:1.15rem}
+  .cot-total .monto{color:var(--celeste)}
+  .cot-nota{color:var(--gris);font-size:.8rem;margin-top:6px}
+  .cot-wsp{margin-top:18px;width:100%;text-align:center;font-size:1.05rem}
+  .cot-wsp[aria-disabled=true]{opacity:.4;pointer-events:none}
+  @media (max-width:560px){.cot-fila{grid-template-columns:1fr}}
+
   /* CONTACTO */
   .contacto{background:linear-gradient(180deg, var(--panel), var(--negro));border-top:1px solid var(--borde);text-align:center}
   .contacto img{width:120px;margin:0 auto 20px}
@@ -134,7 +156,7 @@
     <div class="nav-links">
       <a href="#trabajos">Trabajos</a>
       <a href="#packs">Packs</a>
-      <a href="#talles">Talles</a>
+      <a href="#cotizador">Cotizador</a>
       <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!%20Quiero%20hacer%20una%20consulta." target="_blank" rel="noopener">WhatsApp</a>
     </div>
   </div>
@@ -285,6 +307,38 @@
   </div>
 </section>
 
+<section id="cotizador">
+  <div class="wrap">
+    <h2 class="sec-title">Cotizá <span>al toque</span></h2>
+    <p class="sec-sub">Armá tu pedido y mandalo directo por WhatsApp. Sin vueltas.</p>
+    <div class="cotizador">
+      <div class="cot-fila">
+        <div>
+          <label for="cot-prod">Producto</label>
+          <select id="cot-prod"></select>
+        </div>
+        <div>
+          <label for="cot-cant">Cantidad</label>
+          <input type="number" id="cot-cant" min="1" value="10">
+        </div>
+      </div>
+      <label for="cot-talles">Talles (opcional)</label>
+      <input type="text" id="cot-talles" placeholder="Ej: 2 talle 10, 5 M, 3 L, 1 3XL">
+      <div class="cot-check">
+        <input type="checkbox" id="cot-nombres" checked>
+        <label for="cot-nombres" style="margin:0">Con nombre y número por jugador</label>
+      </div>
+      <label for="cot-nota">Detalle (club, colores, escudo...)</label>
+      <input type="text" id="cot-nota" placeholder="Ej: Club Atlético X, camiseta roja y negra, tenemos escudo">
+      <button class="cot-agregar" id="cot-agregar" type="button">+ Agregar al pedido</button>
+      <div class="cot-items" id="cot-items" hidden></div>
+      <div class="cot-total" id="cot-total" hidden><span>Total estimado</span><span class="monto" id="cot-monto"></span></div>
+      <p class="cot-nota" id="cot-aclaracion" hidden>Los precios son estimados y pueden variar según diseño y cantidades. Los productos "a confirmar" se cotizan por WhatsApp.</p>
+      <a class="btn btn-wsp cot-wsp" id="cot-enviar" aria-disabled="true" href="#" target="_blank" rel="noopener">Enviar pedido por WhatsApp</a>
+    </div>
+  </div>
+</section>
+
 <section class="contacto" id="contacto">
   <div class="wrap">
     <img src="assets/logo_sm_blanco.png" alt="SUBLIMAIT">
@@ -303,5 +357,94 @@
   SUBLIMAIT — Sublimación &amp; Estampado · General Pinedo, Chaco · Hecho con moldería propia 🇦🇷
 </footer>
 
+<script>
+// ── Cotizador SUBLIMAIT ─────────────────────────────────────────
+// PRECIOS: editar acá. null = "a confirmar" (se cotiza por WhatsApp).
+const PRECIOS = {
+  "Camiseta sublimada":            17000,
+  "Musculosa sublimada":           null,
+  "Conjunto camiseta + short":     null,
+  "Short sublimado":               null,
+  "Chomba con logo":               null,
+  "Gorra / Piluso":                8000,
+  "Taza personalizada":            null,
+  "Bandera / Banner":              null,
+};
+const WSP = "5493731623985";
+const items = [];
+const $ = id => document.getElementById(id);
+
+const sel = $("cot-prod");
+for (const p of Object.keys(PRECIOS)) {
+  const o = document.createElement("option");
+  o.value = o.textContent = p;
+  sel.appendChild(o);
+}
+
+const fmt = n => "$" + n.toLocaleString("es-AR");
+
+function render() {
+  const cont = $("cot-items");
+  cont.innerHTML = "";
+  let total = 0, hayAConfirmar = false;
+  items.forEach((it, i) => {
+    const precio = PRECIOS[it.prod];
+    const sub = precio === null ? null : precio * it.cant;
+    if (sub === null) hayAConfirmar = true; else total += sub;
+    const div = document.createElement("div");
+    div.className = "cot-item";
+    const det = [it.cant + "× " + it.prod];
+    if (it.nombres) det.push("con nombre y número");
+    if (it.talles) det.push("talles: " + it.talles);
+    if (it.nota) det.push(it.nota);
+    div.innerHTML = '<span class="det"></span><span class="precio"></span>';
+    div.querySelector(".det").textContent = det.join(" · ");
+    div.querySelector(".precio").textContent = sub === null ? "a confirmar" : fmt(sub);
+    const del = document.createElement("button");
+    del.textContent = "✕";
+    del.title = "Quitar";
+    del.onclick = () => { items.splice(i, 1); render(); };
+    div.appendChild(del);
+    cont.appendChild(div);
+  });
+  const hay = items.length > 0;
+  cont.hidden = !hay;
+  $("cot-total").hidden = !hay || total === 0;
+  $("cot-aclaracion").hidden = !hay;
+  $("cot-monto").textContent = fmt(total) + (hayAConfirmar ? " + ítems a confirmar" : "");
+  const btn = $("cot-enviar");
+  if (hay) {
+    let msg = "Hola SUBLIMAIT! Quiero cotizar este pedido:\n";
+    items.forEach(it => {
+      msg += "\n• " + it.cant + "× " + it.prod;
+      if (it.nombres) msg += " (con nombre y número)";
+      if (it.talles) msg += " — talles: " + it.talles;
+      if (it.nota) msg += " — " + it.nota;
+      const precio = PRECIOS[it.prod];
+      msg += precio === null ? " — precio a confirmar" : " — estimado " + fmt(precio * it.cant);
+    });
+    if (total > 0) msg += "\n\nTotal estimado: " + fmt(total) + (hayAConfirmar ? " + ítems a confirmar" : "");
+    btn.href = "https://wa.me/" + WSP + "?text=" + encodeURIComponent(msg);
+    btn.setAttribute("aria-disabled", "false");
+  } else {
+    btn.href = "#";
+    btn.setAttribute("aria-disabled", "true");
+  }
+}
+
+$("cot-agregar").onclick = () => {
+  const cant = parseInt($("cot-cant").value, 10);
+  if (!cant || cant < 1) { $("cot-cant").focus(); return; }
+  items.push({
+    prod: sel.value,
+    cant,
+    talles: $("cot-talles").value.trim(),
+    nombres: $("cot-nombres").checked,
+    nota: $("cot-nota").value.trim(),
+  });
+  $("cot-talles").value = ""; $("cot-nota").value = "";
+  render();
+};
+</script>
 </body>
 </html>
