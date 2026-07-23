@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tienda SUBLIMAIT — Diseños exclusivos para sublimación</title>
+<meta name="description" content="Catálogo de productos sublimados: tazas, remeras, almohadones, mates, botellas, llaveros, cuadros y más. Diseños propios, personalizados, entrega en Chaco y todo el país.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tienda SUBLIMAIT — Diseños exclusivos para sublimación">
+<meta property="og:description" content="Tazas, remeras, almohadones, mates, botellas, llaveros, cuadros y más. Pedilo por WhatsApp.">
+<meta property="og:image" content="https://chuchovillordo14-design.github.io/sublimait/tienda/assets/logo_sm_celeste.png">
+<meta name="theme-color" content="#0B0E13">
+<link rel="icon" type="image/png" href="assets/logo_sm_celeste.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --negro:#0B0E13; --panel:#131821; --borde:#222B38;
+    --celeste:#29ABE2; --celeste-claro:#7FD4FF;
+    --blanco:#F2F5F7; --gris:#8A94A3; --verde:#22C15E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--negro);color:var(--blanco);font-family:'Inter',system-ui,Segoe UI,Arial,sans-serif;line-height:1.6}
+  h1,h2,h3,.brand{font-family:'Archivo Black','Arial Black',Arial,sans-serif;line-height:1.15}
+  img{max-width:100%;display:block}
+  a{color:var(--celeste);text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  .btn{display:inline-block;padding:13px 24px;border-radius:10px;font-weight:800;letter-spacing:.3px;transition:transform .15s, box-shadow .15s;border:none;cursor:pointer;font-family:inherit;font-size:.95rem}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-wsp{background:var(--verde);color:#04140A}
+  .btn-wsp:hover{box-shadow:0 8px 24px rgba(34,193,94,.35)}
+  .btn-cel{background:var(--celeste);color:#04121C}
+  .btn-cel:hover{box-shadow:0 8px 24px rgba(41,171,226,.35)}
+  .btn-ghost{border:2px solid var(--borde);color:var(--blanco);background:transparent}
+  .btn-ghost:hover{border-color:var(--celeste)}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:60;background:rgba(11,14,19,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--borde)}
+  .nav-inner{display:flex;align-items:center;gap:12px;padding:12px 20px;max-width:1180px;margin:0 auto;flex-wrap:wrap}
+  .nav-inner img{height:32px}
+  .brand{font-size:1.05rem}
+  .brand span{color:var(--celeste)}
+  .nav-links{margin-left:auto;display:flex;gap:16px;align-items:center;font-weight:600;font-size:.88rem}
+  .nav-links a{color:var(--blanco)}
+  .nav-links a:hover{color:var(--celeste-claro)}
+  .nav-links .btn{padding:8px 16px;font-size:.85rem}
+
+  /* BUSCADOR (en nav, siempre visible) */
+  .buscador{flex:1 1 240px;min-width:180px;max-width:420px;position:relative}
+  .buscador input{width:100%;background:var(--panel);border:1px solid var(--borde);border-radius:10px;color:var(--blanco);padding:10px 14px 10px 38px;font-size:.9rem;font-family:inherit}
+  .buscador input:focus{outline:none;border-color:var(--celeste)}
+  .buscador .lupa{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.6;pointer-events:none}
+
+  /* HERO */
+  header{position:relative;overflow:hidden;border-bottom:1px solid var(--borde)}
+  .hero-glow{position:absolute;inset:0;background:
+    radial-gradient(650px 320px at 88% 10%, rgba(41,171,226,.18), transparent 65%),
+    radial-gradient(500px 260px at 8% 95%, rgba(41,171,226,.10), transparent 60%)}
+  .hero{position:relative;padding:56px 20px 60px;text-align:center;display:flex;flex-direction:column;align-items:center}
+  .hero img.logo{width:110px;margin-bottom:18px}
+  .hero .tag{color:var(--celeste);letter-spacing:5px;font-weight:800;font-size:.8rem;margin-bottom:16px;text-transform:uppercase}
+  .hero h1{font-size:clamp(1.7rem,4.4vw,3rem);max-width:760px}
+  .hero h1 em{font-style:normal;color:var(--celeste)}
+  .hero p.sub{color:var(--gris);max-width:600px;margin:16px 0 30px;font-size:1.02rem}
+  .hero .ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+
+  /* Chips de busqueda sugerida */
+  .sugeridos{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+  .sugeridos button{background:var(--panel);border:1px solid var(--borde);color:var(--gris);border-radius:99px;padding:6px 14px;font-size:.82rem;font-family:inherit;cursor:pointer;transition:border-color .15s, color .15s}
+  .sugeridos button:hover{border-color:var(--celeste);color:var(--celeste-claro)}
+
+  /* CATALOGO */
+  section{padding:50px 0}
+  .sec-title{font-size:clamp(1.4rem,3vw,2rem);margin-bottom:8px}
+  .sec-title span{color:var(--celeste)}
+  .sec-sub{color:var(--gris);margin-bottom:28px;max-width:680px}
+
+  .categorias-nav{display:flex;gap:10px;overflow-x:auto;padding:4px 0 20px;scrollbar-width:thin}
+  .categorias-nav button{flex:0 0 auto;background:var(--panel);border:1px solid var(--borde);color:var(--blanco);border-radius:99px;padding:9px 18px;font-weight:700;font-size:.85rem;font-family:inherit;cursor:pointer;white-space:nowrap;transition:border-color .15s, background .15s}
+  .categorias-nav button:hover{border-color:var(--celeste)}
+  .categorias-nav button.activa{background:var(--celeste);color:#04121C;border-color:var(--celeste)}
+
+  .categoria-bloque{margin-bottom:46px}
+  .categoria-bloque h2{font-size:1.25rem;margin-bottom:4px}
+  .categoria-bloque .desc-cat{color:var(--gris);font-size:.9rem;margin-bottom:18px}
+
+  .grid-prod{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+  .card-prod{background:var(--panel);border:1px solid var(--borde);border-radius:14px;overflow:hidden;transition:border-color .2s, transform .2s;display:flex;flex-direction:column}
+  .card-prod:hover{border-color:var(--celeste);transform:translateY(-3px)}
+  .card-prod .foto{background:#fff;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:16px}
+  .card-prod .foto img{max-height:100%;object-fit:contain}
+  .card-prod .info{padding:16px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .card-prod h3{font-size:.98rem;font-family:'Inter';font-weight:800}
+  .card-prod .desc{color:var(--gris);font-size:.85rem;flex:1}
+  .card-prod .precio{font-family:'Archivo Black',Arial,sans-serif;color:var(--celeste-claro);font-size:1.05rem;margin-top:4px}
+  .card-prod .precio.consultar{color:var(--gris);font-family:'Inter';font-weight:700;font-size:.85rem}
+  .card-prod .btn{margin-top:10px;text-align:center;font-size:.85rem;padding:10px}
+
+  /* Card CTA personalizados */
+  .card-cta{background:linear-gradient(135deg, rgba(41,171,226,.14), rgba(34,193,94,.10));border:1px solid var(--celeste);border-radius:14px;padding:30px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .card-cta .emoji{font-size:2.4rem}
+  .card-cta h3{font-size:1.1rem}
+  .card-cta p{color:var(--gris);font-size:.92rem;max-width:420px}
+
+  /* Sin resultados */
+  #sin-resultados{display:none;text-align:center;padding:50px 20px;background:var(--panel);border:1px dashed var(--borde);border-radius:14px}
+  #sin-resultados h3{margin-bottom:8px}
+  #sin-resultados p{color:var(--gris);margin-bottom:20px}
+
+  .contacto{background:linear-gradient(180deg, var(--panel), var(--negro));border-top:1px solid var(--borde);text-align:center}
+  .contacto img{width:100px;margin:0 auto 18px}
+  .contacto .datos{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;margin:22px 0;color:var(--gris);font-weight:600;font-size:.9rem}
+  footer{border-top:1px solid var(--borde);padding:20px;text-align:center;color:var(--gris);font-size:.82rem}
+
+  @media (max-width:720px){
+    .nav-links a:not(.btn){display:none}
+    .buscador{order:3;flex-basis:100%;max-width:none}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <img src="assets/logo_sm_celeste.png" alt="SUBLIMAIT">
+    <div class="brand">TIENDA <span>SUBLIMAIT</span></div>
+    <div class="buscador">
+      <span class="lupa">🔍</span>
+      <input type="text" id="buscador-input" placeholder="Buscá: Messi, River, Boca, Cumpleaños...">
+    </div>
+    <div class="nav-links">
+      <a href="../index.html">Equipos y clubes</a>
+      <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!%20Quiero%20hacer%20un%20pedido." target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-glow"></div>
+  <div class="hero">
+    <img class="logo" src="assets/logo_sm_celeste.png" alt="SUBLIMAIT">
+    <div class="tag">Sublimación & Estampado</div>
+    <h1>Diseños <em>exclusivos</em> para sublimación</h1>
+    <p class="sub">Tazas, remeras, almohadones, mates, botellas, llaveros, cuadros y más. Elegís el diseño o mandás el tuyo — nosotros lo sublimamos.</p>
+    <div class="ctas">
+      <a class="btn btn-cel" href="#catalogo">Ver catálogo</a>
+      <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!%20Quiero%20hacer%20un%20pedido." target="_blank" rel="noopener">Pedir por WhatsApp</a>
+    </div>
+    <div class="sugeridos">
+      <span style="color:var(--gris);font-size:.82rem;align-self:center;margin-right:4px">Buscan:</span>
+      <button data-q="messi">Messi</button>
+      <button data-q="river">River</button>
+      <button data-q="boca">Boca</button>
+      <button data-q="cumpleaños">Cumpleaños</button>
+      <button data-q="fortnite">Fortnite</button>
+      <button data-q="stitch">Stitch</button>
+      <button data-q="bluey">Bluey</button>
+    </div>
+  </div>
+</header>
+
+<section id="catalogo">
+  <div class="wrap">
+    <h2 class="sec-title">Catálogo <span>completo</span></h2>
+    <p class="sec-sub">Nuestros 3 diseños de casa —LITORAL, CARBONO y RETRO— disponibles en cualquier producto. ¿Querés otro diseño, tu foto o un personaje puntual? Lo hacemos a pedido.</p>
+    <div class="categorias-nav" id="categorias-nav"></div>
+    <div id="resultado-busqueda"></div>
+    <div id="sin-resultados">
+      <h3>No encontramos ese diseño publicado todavía</h3>
+      <p>Pero probablemente lo podamos hacer igual — contanos qué buscás y te cotizamos al toque.</p>
+      <a class="btn btn-wsp" id="btn-pedir-busqueda" href="#" target="_blank" rel="noopener">Pedirlo por WhatsApp</a>
+    </div>
+    <div id="catalogo-contenido"></div>
+  </div>
+</section>
+
+<section class="contacto" id="contacto">
+  <div class="wrap">
+    <img src="assets/logo_sm_blanco.png" alt="SUBLIMAIT">
+    <h2 class="sec-title">¿No sabés qué <span>elegir?</span></h2>
+    <p class="sec-sub" style="margin:0 auto 10px">Contanos qué necesitás y te ayudamos a armarlo.</p>
+    <div class="datos">
+      <span>📍 General Pinedo, Chaco</span>
+      <span>📷 <a href="https://www.instagram.com/subli.mait" target="_blank" rel="noopener">@subli.mait</a></span>
+      <span>📞 3731 623985</span>
+    </div>
+    <a class="btn btn-wsp" href="https://wa.me/5493731623985?text=Hola%20SUBLIMAIT!" target="_blank" rel="noopener">Escribinos por WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  TIENDA SUBLIMAIT — Diseños exclusivos para sublimación · General Pinedo, Chaco · <a href="../index.html">Ver sitio para equipos y clubes</a>
+</footer>
+
+<script>
+// ── Datos del catálogo ──────────────────────────────────────────
+const ESTILOS = {
+  litoral: "LITORAL — cintas de agua sobre petróleo",
+  carbono: "CARBONO — hexágonos y trazos neón",
+  retro:   "RETRO — bastones con filete dorado",
+};
+
+function itemsEstilo(cat, archivo, precio, descBase, tagsExtra) {
+  return Object.entries(ESTILOS).map(([est, nombreEst]) => ({
+    cat, nombre: nombreEst.split(" — ")[0] + " " + cat,
+    desc: descBase,
+    precio,
+    img: `assets/productos/${est}_${archivo}`,
+    tags: [cat.toLowerCase(), est, ...tagsExtra],
+  }));
+}
+
+const CATEGORIAS = [
+  { key: "tazas", label: "Tazas" },
+  { key: "remeras", label: "Remeras" },
+  { key: "almohadones", label: "Almohadones" },
+  { key: "mates", label: "Mates" },
+  { key: "botellas", label: "Botellas" },
+  { key: "llaveros", label: "Llaveros" },
+  { key: "cuadros", label: "Cuadros" },
+  { key: "infantiles", label: "Diseños Infantiles" },
+  { key: "deportes", label: "Deportes" },
+  { key: "personalizados", label: "Personalizados" },
+];
+
+const PRODUCTOS = [
+  ...itemsEstilo("Tazas", "taza.png", null, "Taza cerámica 325ml, diseño de casa sublimado a color completo.", ["mug", "regalo"]),
+  ...itemsEstilo("Remeras", "remera.png", 17000, "Remera sublimada, molde real validado, talles 4 al 5XL.", ["camiseta", "deportes"]),
+  ...itemsEstilo("Almohadones", "almohadon.png", null, "Almohadón 40x40cm, funda sublimada de ambos lados.", ["cojin", "decoracion"]),
+  ...itemsEstilo("Mates", "mate.svg", null, "Mate sublimado, diseño de casa a color completo.", ["termo"]),
+  ...itemsEstilo("Botellas", "botella.svg", null, "Botella deportiva sublimada 500ml.", ["deportes", "gym"]),
+  ...itemsEstilo("Llaveros", "llavero.svg", null, "Llavero acrílico con diseño sublimado.", ["regalo"]),
+  ...itemsEstilo("Cuadros", "cuadro.svg", null, "Cuadro decorativo sublimado, listo para colgar.", ["decoracion", "poster"]),
+];
+
+// Diseños infantiles: reusa remeras en talle chico + tags de personajes buscados
+PRODUCTOS.push(...Object.entries(ESTILOS).map(([est]) => ({
+  cat: "Diseños Infantiles",
+  nombre: "Remera infantil personalizada",
+  desc: "Con nombre y el diseño que quieras. Talles del 4 al 16.",
+  precio: null,
+  img: `assets/productos/${est}_remera.png`,
+  tags: ["infantil", "niños", "cumpleaños", "regalo", est],
+})));
+
+// Deportes: cross-sell al sitio de equipos
+PRODUCTOS.push({
+  cat: "Deportes", nombre: "Indumentaria por equipo",
+  desc: "Camisetas, musculosas y shorts con nombre y número. Moldería propia 4→5XL.",
+  precio: null, img: "assets/productos/litoral_remera.png",
+  tags: ["equipo", "club", "futbol", "basquet", "deportes"],
+  link: "../index.html#cotizador",
+});
+
+const WSP = "5493731623985";
+const fmt = n => "$" + n.toLocaleString("es-AR");
+
+function tarjeta(p) {
+  const precioHtml = p.precio ? `<div class="precio">${fmt(p.precio)}</div>` : `<div class="precio consultar">Consultar precio</div>`;
+  const msg = encodeURIComponent(`Hola SUBLIMAIT! Quiero pedir: ${p.nombre} (${p.cat}).`);
+  const href = p.link ? p.link : `https://wa.me/${WSP}?text=${msg}`;
+  const target = p.link ? "" : 'target="_blank" rel="noopener"';
+  return `<div class="card-prod" data-tags="${p.tags.join(" ")} ${p.nombre.toLowerCase()} ${p.cat.toLowerCase()}">
+    <div class="foto"><img src="${p.img}" alt="${p.nombre}" loading="lazy"></div>
+    <div class="info">
+      <h3>${p.nombre}</h3>
+      <p class="desc">${p.desc}</p>
+      ${precioHtml}
+      <a class="btn btn-wsp" href="${href}" ${target}>${p.link ? "Cotizar equipo" : "Pedir"}</a>
+    </div>
+  </div>`;
+}
+
+function cardCTA() {
+  return `<div class="card-cta">
+    <div class="emoji">✨</div>
+    <h3>¿Tenés otra idea?</h3>
+    <p>Mandanos tu foto, tu diseño o el personaje que quieras — Boca, River, tu equipo, lo que sea. Te cotizamos al toque por WhatsApp.</p>
+    <a class="btn btn-wsp" href="https://wa.me/${WSP}?text=${encodeURIComponent('Hola SUBLIMAIT! Quiero un producto personalizado, te cuento qué necesito:')}" target="_blank" rel="noopener">Mandar mi idea</a>
+  </div>`;
+}
+
+function render() {
+  const nav = document.getElementById("categorias-nav");
+  nav.innerHTML = `<button class="activa" data-cat="todas">Todas</button>` +
+    CATEGORIAS.map(c => `<button data-cat="${c.key}">${c.label}</button>`).join("");
+
+  const cont = document.getElementById("catalogo-contenido");
+  cont.innerHTML = CATEGORIAS.map(c => {
+    const items = PRODUCTOS.filter(p => p.cat === c.label);
+    const grid = c.key === "personalizados"
+      ? `<div class="grid-prod">${cardCTA()}</div>`
+      : `<div class="grid-prod">${items.map(tarjeta).join("")}${c.key === "deportes" ? "" : ""}</div>`;
+    return `<div class="categoria-bloque" data-catbloque="${c.key}">
+      <h2>${c.label}</h2>
+      ${grid}
+    </div>`;
+  }).join("");
+
+  nav.querySelectorAll("button").forEach(b => b.onclick = () => filtrarCategoria(b.dataset.cat));
+}
+
+function filtrarCategoria(cat) {
+  document.querySelectorAll("#categorias-nav button").forEach(b => b.classList.toggle("activa", b.dataset.cat === cat));
+  document.querySelectorAll(".categoria-bloque").forEach(el => {
+    el.style.display = (cat === "todas" || el.dataset.catbloque === cat) ? "" : "none";
+  });
+  document.getElementById("catalogo-contenido").hidden = false;
+  document.getElementById("sin-resultados").style.display = "none";
+  document.getElementById("buscador-input").value = "";
+}
+
+function norm(s) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+function buscar(q) {
+  q = norm(q.trim());
+  if (!q) { filtrarCategoria("todas"); return; }
+  const cards = document.querySelectorAll(".card-prod");
+  let hay = false;
+  document.querySelectorAll(".categoria-bloque").forEach(el => el.style.display = "");
+  document.querySelectorAll("#categorias-nav button").forEach(b => b.classList.remove("activa"));
+  cards.forEach(card => {
+    const match = norm(card.dataset.tags).includes(q);
+    card.style.display = match ? "" : "none";
+    if (match) hay = true;
+  });
+  // ocultar bloques de categoria que quedaron sin ninguna card visible
+  document.querySelectorAll(".categoria-bloque").forEach(el => {
+    const visibles = el.querySelectorAll(".card-prod:not([style*='display: none'])");
+    const esCTA = el.dataset.catbloque === "personalizados";
+    if (!esCTA) el.style.display = visibles.length ? "" : "none";
+  });
+  document.getElementById("catalogo-contenido").hidden = !hay;
+  document.getElementById("sin-resultados").style.display = hay ? "none" : "block";
+  if (!hay) {
+    const msg = encodeURIComponent(`Hola SUBLIMAIT! Busco algo con "${q}" — ¿lo pueden hacer?`);
+    document.getElementById("btn-pedir-busqueda").href = `https://wa.me/${WSP}?text=${msg}`;
+  }
+}
+
+document.getElementById("buscador-input").addEventListener("input", e => buscar(e.target.value));
+document.querySelectorAll(".sugeridos button").forEach(b => {
+  b.onclick = () => {
+    document.getElementById("buscador-input").value = b.dataset.q;
+    buscar(b.dataset.q);
+    document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
+  };
+});
+
+render();
+</script>
+</body>
+</html>

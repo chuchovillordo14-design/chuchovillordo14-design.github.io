@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 640" width="240" height="640"><clipPath id="cl"><path d="M 91,0 L 149,0 L 149,77 Q 204,128 204,224 L 204,589 Q 204,640 120,640 Q 36,640 36,589 L 36,224 Q 36,128 91,77 Z"/></clipPath><g clip-path="url(#cl)"><defs>
+      <pattern id="hex" width="26" height="45" patternUnits="userSpaceOnUse">
+        <g fill="none" stroke="#1D1D25" stroke-width="1"><path d="M13,0 L26,7.5 L26,22.5 L13,30 L0,22.5 L0,7.5 Z"/></g>
+      </pattern>
+      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect width="240" height="640" fill="#0A0A0C"/><rect width="240" height="640" fill="url(#hex)"/><polygon points="-10,320 250,90 250,98 -10,328" fill="#00E5FF" opacity="0.9" filter="url(#glow)"/><polygon points="-10,422 250,192 250,196 -10,426" fill="#19c9b4" opacity="0.55" filter="url(#glow)"/><polygon points="-10,525 250,294 250,300 -10,531" fill="#FF2D6B" opacity="0.85" filter="url(#glow)"/></g><g clip-path="url(#cl)"><rect width="240" height="640" fill="none" stroke="#000" stroke-opacity="0.15" stroke-width="3"/></g></svg>
