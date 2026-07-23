@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SUBLIMAIT — Sublimación &amp; Estampado | General Pinedo, Chaco</title>
 <meta name="description" content="Indumentaria deportiva sublimada y diseños listos para sublimar. Camisetas, musculosas y shorts con nombre y número, en todos los talles. General Pinedo, Chaco.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SUBLIMAIT — Sublimación & Estampado">
+<meta property="og:description" content="Tu equipo con nombre y número, del talle 4 al 5XL. Moldería propia validada. Packs de diseño para sublimadores. General Pinedo, Chaco.">
+<meta property="og:image" content="https://chuchovillordo14-design.github.io/sublimait/assets/og.jpg">
+<meta property="og:url" content="https://chuchovillordo14-design.github.io/sublimait/">
+<meta property="og:locale" content="es_AR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://chuchovillordo14-design.github.io/sublimait/assets/og.jpg">
+<meta name="theme-color" content="#0B0E13">
 <link rel="icon" type="image/png" href="assets/logo_sm_celeste.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,7 +151,11 @@
   footer{border-top:1px solid var(--borde);padding:22px 20px;text-align:center;color:var(--gris);font-size:.85rem}
 
   @media (max-width:720px){
-    .nav-links a:not(.btn){display:none}
+    .nav-inner{flex-wrap:wrap;gap:8px 14px;padding:10px 14px}
+    .nav-inner img{height:30px}
+    .brand{font-size:1rem}
+    .nav-links{margin-left:auto;gap:14px;font-size:.82rem}
+    .nav-links .btn{padding:7px 12px;font-size:.82rem}
     .pack img{height:200px}
   }
 </style>
@@ -241,15 +254,15 @@
     <p class="sec-sub">Diseños concept 100% propios y editables. Cada pack incluye el arte vectorial + la moldería del talle 4 al 5XL, lista para imprimir. Lo que nadie más te da.</p>
     <div class="grid g3">
       <div class="pack">
-        <div class="marco"><img src="assets/preview_arte_01_litoral.png" alt="Diseño Litoral"></div>
+        <div class="marco"><img src="assets/pack_litoral.jpg" alt="Diseño Litoral aplicado al molde: delantero, espalda y mangas"></div>
         <div class="info">
           <h3>LITORAL</h3>
-          <p>Cintas de agua sobre petróleo con guarda geométrica. Identidad del norte.</p>
+          <p>Cintas de agua sobre petróleo con guarda geométrica. Delantero, espalda y mangas.</p>
           <span class="chip">Arte + moldería 4→5XL</span> <span class="chip" style="border-color:#22C15E;color:#7be3a3">$18.000</span>
         </div>
       </div>
       <div class="pack">
-        <div class="marco" style="background:#17171c"><img src="assets/preview_arte_02_carbono.png" alt="Diseño Carbono"></div>
+        <div class="marco" style="background:#17171c"><img src="assets/pack_carbono.jpg" alt="Diseño Carbono aplicado al molde: delantero, espalda y mangas"></div>
         <div class="info">
           <h3>CARBONO</h3>
           <p>Textura hexagonal con trazos neón. El estilo que pide el básquet y el gaming.</p>
@@ -257,7 +270,7 @@
         </div>
       </div>
       <div class="pack">
-        <div class="marco"><img src="assets/preview_arte_03_retro.png" alt="Diseño Retro"></div>
+        <div class="marco"><img src="assets/pack_retro.jpg" alt="Diseño Retro aplicado al molde: delantero, espalda y mangas"></div>
         <div class="info">
           <h3>RETRO CLÁSICO</h3>
           <p>Bastones con filete dorado y grano vintage. El clásico que nunca falla.</p>
@@ -387,14 +400,15 @@ const WSP = "5493731623985";
 const items = [];
 const $ = id => document.getElementById(id);
 
+const fmt = n => "$" + n.toLocaleString("es-AR");
+
 const sel = $("cot-prod");
-for (const p of Object.keys(PRECIOS)) {
+for (const [p, precio] of Object.entries(PRECIOS)) {
   const o = document.createElement("option");
-  o.value = o.textContent = p;
+  o.value = p;
+  o.textContent = p + (precio === null ? " — a confirmar" : " — " + fmt(precio));
   sel.appendChild(o);
 }
-
-const fmt = n => "$" + n.toLocaleString("es-AR");
 
 function render() {
   const cont = $("cot-items");
@@ -457,6 +471,10 @@ $("cot-agregar").onclick = () => {
   });
   $("cot-talles").value = ""; $("cot-nota").value = "";
   render();
+  const lista = $("cot-items");
+  lista.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  lista.style.transition = "none"; lista.style.background = "rgba(41,171,226,.10)";
+  setTimeout(() => { lista.style.transition = "background 1s"; lista.style.background = "transparent"; }, 350);
 };
 </script>
 </body>
