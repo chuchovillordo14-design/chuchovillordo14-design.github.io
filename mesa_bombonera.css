@@ -1,0 +1,45 @@
+/* ══════════════════════════════════════════════════════════════
+   mesa_bombonera.css — escenario nivel 5: el más grande e intenso.
+
+   ⚠️ TODAS las reglas van bajo `body.tema-bombonera`. Mismo contrato que el
+   resto (ver src/ui/escenarios.js): mesa_futbol.css y mesa_realismo.css NO
+   están scopeados, son la base y se aplican siempre.
+
+   ⚠️ EL FONDO NO SE PONE ACÁ (mismo motivo que los demás escenarios: el
+   !important de mesa_realismo.css no se puede pisar con un selector).
+   ══════════════════════════════════════════════════════════════ */
+
+body.tema-bombonera #esc-fondo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+}
+
+body.tema-bombonera #mesa {
+  position: relative;
+  background: #050508 !important;   /* respaldo si el PNG no llega */
+}
+body.tema-bombonera #mesa::before,
+body.tema-bombonera #mesa::after {
+  display: none !important;
+}
+
+/* La hinchada más densa de la escalera: sombra fuerte, la cancha es un
+   verde muy vivo bajo reflectores. */
+body.tema-bombonera .played-row .card,
+body.tema-bombonera .player-hand .card {
+  box-shadow: 0 11px 24px rgba(0, 0, 0, .6);
+}
+
+/* Info-bar y tanteador: casi negro, contra la noche del fondo. */
+body.tema-bombonera .info-bar,
+body.tema-bombonera .tanteador {
+  background: linear-gradient(180deg, rgba(8, 8, 10, .94), rgba(4, 4, 5, .97));
+  border-color: rgba(235, 200, 180, .26);
+}

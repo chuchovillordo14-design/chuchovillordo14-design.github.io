@@ -1,0 +1,56 @@
+/* ══════════════════════════════════════════════════════════════
+   mesa_estadio_chico.css — escenario nivel 3: el primer estadio propio.
+
+   ⚠️ TODAS las reglas van bajo `body.tema-estadio-chico`. Es EL contrato de
+   los escenarios (ver el encabezado de src/ui/escenarios.js): mesa_futbol.css
+   y mesa_realismo.css NO están scopeados, son la base y se aplican siempre.
+
+   ⚠️ EL FONDO NO SE PONE ACÁ. mesa_realismo.css declara
+   `#mesa { background: ...!important }` y contra un !important no hay
+   selector que gane — probado. El fondo lo inyecta escenarios.js como un
+   <img id="esc-fondo"> detrás de la mesa (campo `fondo` del registro); un
+   elemento aparte no compite con `background`. Este archivo solo lo ubica.
+
+   El fondo es una vista aérea de la cancha (tribunas angostas a los costados,
+   franja central despejada para cartas), no una foto de tribuna como el
+   potrero/club — por eso `object-position: center center` en vez de
+   "center top": acá no hay nada que se corte arriba, toda la imagen es
+   simétrica y centrada.
+   ══════════════════════════════════════════════════════════════ */
+
+body.tema-estadio-chico #esc-fondo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+}
+
+body.tema-estadio-chico #mesa {
+  position: relative;
+  /* Los !important son para ANULAR los de la base (césped y franjas de
+     mesa_realismo.css), único uso legítimo acá. */
+  background: #1f3a1a !important;   /* respaldo si el PNG no llega */
+}
+body.tema-estadio-chico #mesa::before,
+body.tema-estadio-chico #mesa::after {
+  display: none !important;
+}
+
+/* Cancha iluminada de atardecer: sombra un poco más marcada que sobre el
+   verde parejo del club, para que las cartas no floten. */
+body.tema-estadio-chico .played-row .card,
+body.tema-estadio-chico .player-hand .card {
+  box-shadow: 0 9px 20px rgba(0, 0, 0, .5);
+}
+
+/* Info-bar y tanteador: tonos cálidos del atardecer del fondo. */
+body.tema-estadio-chico .info-bar,
+body.tema-estadio-chico .tanteador {
+  background: linear-gradient(180deg, rgba(30, 24, 14, .93), rgba(18, 14, 8, .96));
+  border-color: rgba(230, 210, 180, .26);
+}

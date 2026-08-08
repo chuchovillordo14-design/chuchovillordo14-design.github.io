@@ -1,0 +1,47 @@
+/* ══════════════════════════════════════════════════════════════
+   mesa_monumental.css — escenario nivel 6: el Monumental, la cima.
+
+   ⚠️ TODAS las reglas van bajo `body.tema-monumental`. Mismo contrato que el
+   resto (ver src/ui/escenarios.js): mesa_futbol.css y mesa_realismo.css NO
+   están scopeados, son la base y se aplican siempre.
+
+   ⚠️ EL FONDO NO SE PONE ACÁ (mismo motivo que los demás escenarios: el
+   !important de mesa_realismo.css no se puede pisar con un selector).
+   ══════════════════════════════════════════════════════════════ */
+
+body.tema-monumental #esc-fondo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+}
+
+body.tema-monumental #mesa {
+  position: relative;
+  background: #030305 !important;   /* respaldo si el PNG no llega */
+}
+body.tema-monumental #mesa::before,
+body.tema-monumental #mesa::after {
+  display: none !important;
+}
+
+/* El más grande de la escalera: sombra más marcada de todas, contra el
+   negro casi total del fondo y el brillo de los reflectores del techo. */
+body.tema-monumental .played-row .card,
+body.tema-monumental .player-hand .card {
+  box-shadow: 0 12px 26px rgba(0, 0, 0, .65);
+}
+
+/* Info-bar y tanteador: dorado sobre negro, el color del confeti y las
+   luces del anillo del techo — distingue este nivel del azul frío del
+   Estadio Grande y del rojo apagado de la Bombonera. */
+body.tema-monumental .info-bar,
+body.tema-monumental .tanteador {
+  background: linear-gradient(180deg, rgba(6, 6, 8, .95), rgba(3, 3, 4, .98));
+  border-color: rgba(230, 200, 130, .3);
+}

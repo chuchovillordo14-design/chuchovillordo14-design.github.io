@@ -1,0 +1,45 @@
+/* ══════════════════════════════════════════════════════════════
+   mesa_estadio_grande.css — escenario nivel 4: el estadio grande retumba.
+
+   ⚠️ TODAS las reglas van bajo `body.tema-estadio-grande`. Mismo contrato
+   que el resto (ver src/ui/escenarios.js): mesa_futbol.css y
+   mesa_realismo.css NO están scopeados, son la base y se aplican siempre.
+
+   ⚠️ EL FONDO NO SE PONE ACÁ (mismo motivo que mesa_estadio_chico.css: el
+   !important de mesa_realismo.css no se puede pisar con un selector).
+   ══════════════════════════════════════════════════════════════ */
+
+body.tema-estadio-grande #esc-fondo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+}
+
+body.tema-estadio-grande #mesa {
+  position: relative;
+  background: #0d1a3a !important;   /* respaldo si el PNG no llega */
+}
+body.tema-estadio-grande #mesa::before,
+body.tema-estadio-grande #mesa::after {
+  display: none !important;
+}
+
+/* Noche de estadio grande, mucha luz de reflectores: sombra fuerte para que
+   las cartas no se laven contra el verde brillante. */
+body.tema-estadio-grande .played-row .card,
+body.tema-estadio-grande .player-hand .card {
+  box-shadow: 0 10px 22px rgba(0, 0, 0, .55);
+}
+
+/* Info-bar y tanteador: azul noche frío, el idioma del fondo. */
+body.tema-estadio-grande .info-bar,
+body.tema-estadio-grande .tanteador {
+  background: linear-gradient(180deg, rgba(10, 16, 34, .93), rgba(6, 10, 22, .96));
+  border-color: rgba(180, 200, 235, .26);
+}

@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <!-- Escape HTML global: usar SIEMPRE que se inyecte un nombre/dato de usuario
+         (o que llegue por red) dentro de innerHTML. Evita XSS. -->
+    <script>window.esc = function (s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    };</script>
+    <!-- Título/descripción con palabras de intención ("jugar", "online",
+         "gratis") — antes no tenían ninguna (auditoría SEO del 31 jul,
+         seo_robots_sitemap.md). Alineados al lanzamiento del 3 ago: el
+         menú público arranca con Picadito + Amistoso + Online nada más
+         (ver lanzamiento_menu_reducido_3ago.md), así que la descripción
+         ya no promete Modo DT/Copas/Mundial — quedaría desalineada con
+         lo primero que ve alguien que entra. -->
+    <title>Truco GOL — Jugá al Truco Argentino Online Gratis</title>
+    <meta name="description" content="Jugá al truco argentino gratis y sin registrarte: partidas rápidas contra la IA, amistosos eligiendo los equipos, o en vivo por internet contra otra persona. Ambientado en fútbol argentino.">
+    <meta name="theme-color" content="#0f4a28">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="canonical" href="https://trucogol.com.ar/">
+    <!-- Compartir (Open Graph) — esto ES el producto para el que llega por
+         WhatsApp: la preview del link es lo primero que ve. La imagen se
+         genera con tools/portada_og.py (1200x630, 84 KB). La vieja
+         portada.png era 630x500 y pesaba 382 KB: WhatsApp la recortaba y a
+         veces directamente no la mostraba (arriba de ~300 KB falla, y cachea
+         el fallo por días). portada.png sigue existiendo porque
+         features_pwa.js la usa de ícono en las notificaciones push. -->
+    <meta property="og:title" content="Truco GOL — Jugá al Truco Argentino Online Gratis">
+    <meta property="og:description" content="Truco argentino con temática de fútbol: jugá gratis contra la IA, con amigos, o en vivo por internet contra otra persona.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://trucogol.com.ar/">
+    <meta property="og:locale" content="es_AR">
+    <meta property="og:site_name" content="Truco GOL">
+    <meta property="og:image" content="https://trucogol.com.ar/portada.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <!-- width/height explícitos: con ellos WhatsApp arma la tarjeta grande ya
+         en la PRIMERA compartida, sin esperar a bajar la imagen para medirla. -->
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Escudo de Truco GOL: truco argentino online, gratis y sin instalar nada.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Truco GOL — Jugá al Truco Argentino Online Gratis">
+    <meta name="twitter:description" content="Truco argentino con temática de fútbol: jugá gratis contra la IA, con amigos, o en vivo por internet contra otra persona.">
+    <meta name="twitter:image" content="https://trucogol.com.ar/portada.jpg">
+    <!-- Favicon embebido (carta de truco dorada) -->
+    <!-- Favicon: el escudo oficial (antes había un naipe SVG improvisado) -->
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.bundle.css">
+    <link rel="stylesheet" href="mesa_estadio_chico.css">
+    <link rel="stylesheet" href="mesa_estadio_grande.css">
+    <link rel="stylesheet" href="mesa_bombonera.css">
+    <link rel="stylesheet" href="mesa_monumental.css">
+    <!-- mesa_pulperia.css: tema alternativo (bar/madera) que pisaba con
+         !important el pase "Blyts argentino" de mesa_futbol.css. El archivo
+         YA NO EXISTE en el repo (borrado): para revivir la idea hay que
+         rehacer el CSS, no alcanza con reactivar un <link>. -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-title" content="Truco GOL">
+    <style>
+    /* ══ Selector de equipos — LIGA PROFESIONAL ══ */
+    #eq-cat-container{ width:100%; max-width:420px; margin:14px auto 0; }
+    .eq-region{ margin-bottom:14px; }
+    .eq-region:last-child{ margin-bottom:0; }
+    .eq-region-title{
+      font-family:'Oswald',sans-serif; font-size:11px; font-weight:700;
+      letter-spacing:3px; color:var(--gold,#f5c518); opacity:.85;
+      text-transform:uppercase; text-align:left;
+      margin:0 0 6px 2px; padding-bottom:4px;
+      border-bottom:1px solid rgba(245,197,24,.25);
+    }
+    .eq-region .eq-cat + .eq-cat{ margin-top:6px; }
+    .eq-cat{
+      background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.15);
+      border-radius:10px; overflow:hidden;
+    }
+    .eq-cat-header{
+      display:flex; align-items:center; gap:10px; padding:8px 12px;
+      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+    }
+    .eq-cat-header:hover{ background:rgba(255,255,255,.06); }
+    .eq-cat-logo{
+      width:30px; height:42px; object-fit:contain;
+      filter:drop-shadow(0 1px 3px rgba(0,0,0,.5));
+    }
+    .eq-cat-textos{ display:flex; flex-direction:column; flex:1; text-align:left; }
+    .eq-cat-name{
+      font-family:'Oswald',sans-serif; font-size:13px; font-weight:600;
+      letter-spacing:2px; color:var(--gold,#f5c518);
+    }
+    .eq-cat-badge{
+      font-family:'Oswald',sans-serif; font-size:9px; letter-spacing:1px;
+      color:#fff; opacity:.65; text-transform:uppercase;
+    }
+    .eq-cat-arrow{ font-size:12px; color:#fff; opacity:.7; transition:transform .2s; }
+    .eq-cat.open .eq-cat-arrow{ transform:rotate(180deg); }
+    .equipo-grid{
+      display:none; grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:6px; padding:8px; max-height:200px; overflow-y:auto;
+      scrollbar-width:thin; border-top:1px solid rgba(255,255,255,.1);
+    }
+    .eq-cat.open .equipo-grid{ display:grid; }
+    .eq-card{
+      background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12);
+      border-radius:8px; padding:7px 3px 5px; cursor:pointer;
+      display:flex; flex-direction:column; align-items:center; gap:4px;
+      transition:border-color .15s, transform .1s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .eq-card:hover{ border-color:rgba(255,255,255,.4); transform:translateY(-2px); }
+    .eq-card.activo{
+      border:2px solid var(--gold,#f5c518);
+      box-shadow:0 0 10px rgba(245,197,24,.35);
+    }
+    .eq-card img{ width:34px; height:34px; object-fit:contain; }
+    .eq-nombre{
+      font-family:'Oswald',sans-serif; font-size:8px; line-height:1.15;
+      color:#fff; opacity:.85; text-align:center;
+    }
+    .equipo-elegido-lbl{
+      font-family:'Oswald',sans-serif; font-size:11px; color:var(--gold,#f5c518);
+      text-align:center; margin:6px 0 2px; min-height:14px;
+    }
+    /* ══ Partido Amistoso ══ */
+    #eq-cat-container-amistoso-j, #eq-cat-container-amistoso-r{
+      width:100%; max-width:420px; margin:6px auto 0;
+    }
+    .am-section-title{
+      font-family:'Oswald',sans-serif; font-size:11px; font-weight:700;
+      letter-spacing:2px; color:var(--gold,#f5c518); text-align:center;
+      margin:10px 0 2px; text-transform:uppercase;
+    }
+    .am-vs{
+      font-family:'Bebas Neue','Oswald',sans-serif; font-size:20px;
+      letter-spacing:3px; color:#fff; opacity:.6; text-align:center; margin:4px 0;
+    }
+    /* Escudos en la mesa */
+    .escudo-mini{
+      width:26px; height:26px; object-fit:contain;
+      background:rgba(255,255,255,.92); border-radius:50%;
+      padding:2px; box-shadow:0 1px 3px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.2);
+      vertical-align:middle;
+    }
+    /* ══ Avatares de DT ══ */
+    #dt-avatar-grid{
+      display:flex; justify-content:center; gap:12px;
+      margin:10px auto; max-width:420px;
+    }
+    .dt-card{
+      background:rgba(0,0,0,.35); border:2px solid rgba(255,255,255,.15);
+      border-radius:12px; padding:8px 10px 6px; cursor:pointer;
+      display:flex; flex-direction:column; align-items:center; gap:5px;
+      transition:border-color .15s, transform .1s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .dt-card:hover{ border-color:rgba(255,255,255,.45); transform:translateY(-2px); }
+    .dt-card.activo{
+      border-color:var(--gold,#f5c518);
+      box-shadow:0 0 12px rgba(245,197,24,.4);
+    }
+    .dt-card img{
+      width:64px; height:64px; object-fit:cover; border-radius:50%;
+      background:#fff;
+    }
+    .dt-card span{
+      font-family:'Oswald',sans-serif; font-size:9px; letter-spacing:.5px;
+      color:#fff; opacity:.85; text-transform:uppercase;
+    }
+    /* ══ Tabla de la liga ══ */
+    .liga-fecha{
+      font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:2px;
+      color:var(--gold,#f5c518); text-align:center; margin:4px 0 8px;
+      text-transform:uppercase;
+    }
+    .liga-tabla-wrap{ max-height:300px; overflow-y:auto; scrollbar-width:thin; }
+    .liga-t{
+      width:100%; border-collapse:collapse;
+      font-family:'Oswald',sans-serif; font-size:10px; color:#fff;
+    }
+    .liga-t th{
+      position:sticky; top:0; background:rgba(0,0,0,.85);
+      color:var(--gold,#f5c518); padding:4px 3px; font-weight:600;
+      letter-spacing:.5px; text-align:center; font-size:9px;
+    }
+    .liga-t td{
+      padding:3px; text-align:center;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .liga-t .tl{ text-align:left; white-space:nowrap; }
+    .liga-esc{
+      width:16px; height:16px; object-fit:contain;
+      vertical-align:-4px; margin-right:5px;
+      background:rgba(255,255,255,.9); border-radius:50%;
+      padding:1px; box-shadow:0 0 0 1px rgba(0,0,0,.25);
+    }
+    .liga-t tr.mio td{ background:rgba(245,197,24,.16); font-weight:600; }
+    .liga-t tr.z1 td:first-child{ box-shadow:inset 3px 0 0 #f5c518; }
+    .liga-t tr.z4 td:first-child{ box-shadow:inset 3px 0 0 #3fa9f5; }
+    .liga-t tr.zd td:first-child{ box-shadow:inset 3px 0 0 #e0151d; }
+    .liga-campeon{
+      font-family:'Oswald',sans-serif; font-size:13px; font-weight:700;
+      color:var(--gold,#f5c518); text-align:center; padding:8px;
+      border:1px dashed var(--gold,#f5c518); border-radius:8px; margin-bottom:8px;
+    }
+    .liga-leyenda{
+      font-family:'Oswald',sans-serif; font-size:8px; color:#fff; opacity:.55;
+      text-align:center; margin-top:6px; letter-spacing:.5px;
+    }
+    .liga-proximo{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      text-align:center; padding:6px; margin-bottom:8px;
+      background:rgba(245,197,24,.08); border:1px solid rgba(245,197,24,.3);
+      border-radius:8px;
+    }
+    .liga-proximo b{ color:var(--gold,#f5c518); }
+    /* ── Tabs Tabla / Fixture ── */
+    .liga-tabs{ display:flex; gap:6px; margin-bottom:8px; }
+    .liga-tab-btn{
+      flex:1; padding:6px; font-family:'Oswald',sans-serif; font-size:10px;
+      letter-spacing:1px; color:#fff; background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.18); border-radius:8px; cursor:pointer;
+    }
+    .liga-tab-btn.active{
+      color:#111; background:var(--gold,#f5c518); border-color:var(--gold,#f5c518);
+      font-weight:700;
+    }
+    /* ── Fixture ── */
+    .liga-fixture-wrap{ max-height:320px; overflow-y:auto; scrollbar-width:thin; }
+    .fx-fecha{
+      background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.12);
+      border-radius:8px; margin-bottom:6px; overflow:hidden;
+    }
+    .fx-fecha.actual{ border-color:var(--gold,#f5c518); }
+    .fx-hdr{
+      display:flex; align-items:center; gap:8px; padding:6px 10px;
+      cursor:pointer; user-select:none;
+    }
+    .fx-num{
+      font-family:'Oswald',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:1.5px; color:var(--gold,#f5c518); flex:1;
+    }
+    .fx-estado{
+      font-family:'Oswald',sans-serif; font-size:8px; color:#fff; opacity:.6;
+      letter-spacing:.5px;
+    }
+    .fx-fecha.actual .fx-estado{ color:var(--gold,#f5c518); opacity:1; }
+    .fx-arrow{ font-size:10px; color:#fff; opacity:.6; transition:transform .2s; }
+    .fx-fecha.open .fx-arrow{ transform:rotate(180deg); }
+    .fx-partidos{ display:none; border-top:1px solid rgba(255,255,255,.08); padding:4px 8px 6px; }
+    .fx-fecha.open .fx-partidos{ display:block; }
+    .fx-partido{
+      display:flex; align-items:center; gap:4px; padding:3px 2px;
+      font-family:'Oswald',sans-serif; font-size:9px; color:#fff;
+      border-bottom:1px solid rgba(255,255,255,.05);
+    }
+    .fx-partido:last-child{ border-bottom:none; }
+    .fx-partido.mio{ background:rgba(245,197,24,.13); border-radius:5px; font-weight:600; }
+    .fx-eq{ flex:1; display:flex; align-items:center; gap:4px; white-space:nowrap; overflow:hidden; }
+    .fx-eq.fx-der{ justify-content:flex-end; }
+    .fx-marcador{
+      min-width:38px; text-align:center; color:var(--gold,#f5c518);
+      font-weight:700; font-size:9px;
+    }
+    .fx-gano{ color:#7be67b; }
+    .fx-perdio{ color:rgba(255,255,255,.45); }
+    /* ── Mundial 2026 ── */
+    .mundial-info-linea{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      text-align:center; margin:4px 0; letter-spacing:.5px;
+    }
+    .mundial-proximo{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      text-align:center; padding:6px; margin-bottom:8px;
+      background:rgba(245,197,24,.08); border:1px solid rgba(245,197,24,.3);
+      border-radius:8px;
+    }
+    .mundial-proximo b{ color:var(--gold,#f5c518); }
+    .mundial-campeon{
+      font-family:'Oswald',sans-serif; font-size:13px; font-weight:700;
+      color:var(--gold,#f5c518); text-align:center; padding:8px;
+      border:1px dashed var(--gold,#f5c518); border-radius:8px; margin-bottom:8px;
+    }
+    .mundial-fin{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      opacity:.75; text-align:center; margin-top:4px;
+    }
+    .mundial-vacio{
+      font-family:'Oswald',sans-serif; font-size:10px; color:#fff;
+      opacity:.55; text-align:center; padding:10px;
+    }
+    .mundial-grupo{
+      background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.12);
+      border-radius:8px; margin-bottom:8px; padding:4px 6px 6px; overflow:hidden;
+    }
+    .mundial-grupo.mundial-grupo-mio{ border-color:var(--gold,#f5c518); }
+    .mundial-grupo .fx-num{ display:block; padding:4px 2px 2px; }
+    /* ── Cuadro de eliminación ── */
+    .mundial-bracket{ max-height:380px; overflow-y:auto; scrollbar-width:thin; }
+    .mb-ronda{ margin-bottom:10px; }
+    .mb-ronda-titulo{
+      font-family:'Oswald',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:1.5px; color:var(--gold,#f5c518); margin-bottom:4px;
+      text-transform:uppercase;
+    }
+    .mb-partido{
+      display:flex; flex-direction:column; gap:2px;
+      background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.1);
+      border-radius:6px; padding:4px 8px; margin-bottom:4px;
+    }
+    .mb-partido.mio{ border-color:var(--gold,#f5c518); background:rgba(245,197,24,.1); }
+    .mb-jugador{
+      display:flex; align-items:center; justify-content:space-between; gap:6px;
+      font-family:'Oswald',sans-serif; font-size:9px; color:#fff;
+    }
+    /* ── Álbum de figuritas ── */
+    .album-box{ max-width:480px; }
+    .album-prog-txt{
+      font-family:'Oswald',sans-serif; font-size:12px; color:#fff;
+      text-align:center; margin:4px 0;
+    }
+    .album-repes{ color:var(--gold,#f5c518); }
+    .album-prog-bar{
+      height:8px; background:rgba(0,0,0,.4); border-radius:6px; overflow:hidden;
+      border:1px solid rgba(255,255,255,.15); margin-bottom:8px;
+    }
+    .album-prog-bar div{
+      height:100%; background:linear-gradient(90deg,#c89b3c,#f5c518);
+      transition:width .4s;
+    }
+    .album-completo{
+      font-family:'Oswald',sans-serif; font-size:12px; font-weight:700;
+      color:var(--gold,#f5c518); text-align:center; padding:6px;
+      border:1px dashed var(--gold,#f5c518); border-radius:8px; margin-bottom:8px;
+    }
+    .album-sobre-btn{ width:100%; margin-bottom:10px; }
+    .album-sobre-btn:disabled{ opacity:.4; cursor:default; }
+    .album-sobre-btn.pulse{ animation:sobrePulse 1.2s ease-in-out infinite alternate; }
+    @keyframes sobrePulse{
+      from{ box-shadow:0 0 0 rgba(245,197,24,0); }
+      to  { box-shadow:0 0 16px rgba(245,197,24,.55); }
+    }
+    .album-canje-btn{ width:100%; margin-bottom:10px; font-size:10.5px; }
+    .album-canje-btn:disabled{ opacity:.4; cursor:default; }
+    .album-wrap{ max-height:340px; overflow-y:auto; scrollbar-width:thin; }
+    .album-sec-titulo{
+      font-family:'Oswald',sans-serif; font-size:11px; font-weight:700;
+      letter-spacing:2px; margin:8px 0 4px;
+    }
+    .album-fila{
+      display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px;
+    }
+    .album-figu{ position:relative; }
+    .album-figu svg{ width:100%; height:auto; display:block; border-radius:8px; }
+    .album-figu.falta{ opacity:.8; }
+    .album-figu:not(.falta){ cursor:pointer; transition:transform .15s; }
+    .album-figu:not(.falta):hover{ transform:scale(1.06); }
+    .album-cant{
+      position:absolute; bottom:3px; right:3px;
+      font-family:'Oswald',sans-serif; font-size:8px; font-weight:700;
+      color:#111; background:var(--gold,#f5c518); border-radius:6px;
+      padding:1px 4px;
+    }
+    .album-ayuda{
+      font-family:'Oswald',sans-serif; font-size:8px; color:#fff; opacity:.55;
+      text-align:center; margin-top:8px; letter-spacing:.5px;
+    }
+    /* ── Overlay de apertura de sobre ── */
+    #sobre-overlay{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.82); z-index:1100;
+    }
+    #sobre-overlay.show{ display:flex; }
+    .sobre-panel{
+      background:linear-gradient(160deg,#0e2238,#06121f);
+      border:2px solid var(--gold,#f5c518); border-radius:16px;
+      padding:18px 20px; text-align:center; max-width:420px; width:92%;
+      box-shadow:0 0 50px rgba(245,197,24,.25);
+    }
+    .sobre-titulo{
+      font-family:'Bebas Neue','Oswald',sans-serif; font-size:26px;
+      letter-spacing:4px; color:var(--gold,#f5c518);
+    }
+    .sobre-sub{
+      font-family:'Oswald',sans-serif; font-size:11px; color:#fff;
+      opacity:.85; margin:2px 0 12px;
+    }
+    /* ── Selector de escenarios (Ajustes) ──────────────────────────────
+       Reemplaza al botón binario "🏟 Escenario: PALCO / clásico". Los que
+       todavía no desbloqueaste salen con candado y dicen desde qué estadio
+       se abren, que es lo que convierte el selector en una zanahoria en vez
+       de una lista de cosas que no podés tocar. */
+    #esc-selector{ margin:10px 0 4px; }
+    .esc-titulo{
+      font-family:'Bebas Neue','Oswald',sans-serif; font-size:13px; letter-spacing:3px;
+      color:var(--gold,#f5c518); margin-bottom:6px;
+    }
+    .esc-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(84px,1fr)); gap:6px; }
+    .esc-card{
+      display:flex; flex-direction:column; align-items:center; gap:2px;
+      background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
+      border-radius:10px; padding:8px 4px; cursor:pointer; text-align:center;
+      transition:border-color .15s, background .15s, transform .12s;
+    }
+    .esc-card:hover:not(.lock){ transform:translateY(-2px); background:rgba(255,255,255,.09); }
+    .esc-card.sel{ border-color:var(--gold,#f5c518); background:rgba(245,197,24,.12); }
+    .esc-card.lock{ opacity:.45; cursor:default; }
+    .esc-emoji{ font-size:20px; line-height:1; }
+    .esc-nom{
+      font-family:'Oswald',sans-serif; font-size:10px; font-weight:700;
+      letter-spacing:.5px; color:#fff;
+    }
+    .esc-desc{ font-size:8px; color:rgba(255,255,255,.55); line-height:1.25; }
+
+    /* ── El paquete cerrado y su apertura ──────────────────────────────
+       Tres fases, manejadas con clases en #sobre-overlay:
+         (sin clase)      → paquete cerrado, latiendo, esperando el toque
+         .sobre-abriendo  → tiembla, se rasga la tapa y sale el fogonazo
+         .sobre-abierto   → el paquete ya no está, se ven las cartas
+       El botón "¡A PEGARLAS!" y las cartas arrancan ocultos: si aparecen
+       antes de rasgar, el sobre deja de ser una sorpresa y pasa a ser un
+       trámite con un cartelito arriba. */
+    .sobre-paquete{
+      background:none; border:0; padding:0; cursor:pointer;
+      position:relative; width:172px; margin:4px auto 10px; display:block;
+      animation:sobreLatir 2.2s ease-in-out infinite;
+    }
+    .sobre-paquete:focus-visible{ outline:3px solid var(--gold,#f5c518); outline-offset:6px; border-radius:12px; }
+    .sobre-svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 12px 26px rgba(0,0,0,.6)); }
+    .sobre-tip{
+      display:block; margin-top:8px; font-family:'Oswald',sans-serif; font-size:10px;
+      letter-spacing:2px; color:var(--gold,#f5c518); opacity:.9;
+      animation:sobreTip 1.4s ease-in-out infinite alternate;
+    }
+    .sobre-brillo{ animation:sobreBrillo 2.8s ease-in-out infinite; }
+    /* El fogonazo del rasgado: nace del borde de arriba, que es por donde se abre */
+    .sobre-flash{
+      position:absolute; left:50%; top:14%; width:10px; height:10px; border-radius:50%;
+      transform:translate(-50%,-50%) scale(0); opacity:0; pointer-events:none;
+      background:radial-gradient(circle, #fff 0%, rgba(245,197,24,.85) 35%, rgba(245,197,24,0) 70%);
+    }
+    @keyframes sobreLatir{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-7px) } }
+    @keyframes sobreTip{ from{ opacity:.45 } to{ opacity:1 } }
+    @keyframes sobreBrillo{ 0%{ transform:translateX(0) skewX(-18deg) } 55%,100%{ transform:translateX(300px) skewX(-18deg) } }
+    @keyframes sobreTemblar{
+      0%,100%{ transform:translate(0,0) rotate(0) }
+      20%{ transform:translate(-5px,1px) rotate(-2deg) }
+      40%{ transform:translate(5px,-1px) rotate(2deg) }
+      60%{ transform:translate(-4px,0) rotate(-1.5deg) }
+      80%{ transform:translate(4px,1px) rotate(1.5deg) }
+    }
+    @keyframes sobreRasgar{
+      to{ transform:translateY(-120px) rotate(-14deg); opacity:0 }
+    }
+    @keyframes sobreFogonazo{
+      0%{ transform:translate(-50%,-50%) scale(0); opacity:0 }
+      30%{ opacity:1 }
+      100%{ transform:translate(-50%,-50%) scale(26); opacity:0 }
+    }
+    @keyframes sobreIrse{
+      to{ transform:translateY(26px) scale(.82); opacity:0 }
+    }
+    /* Fase 2 */
+    .sobre-abriendo .sobre-paquete{ animation:sobreTemblar .38s ease-in-out; }
+    .sobre-abriendo .sobre-tip{ opacity:0; transition:opacity .15s; animation:none; }
+    .sobre-abriendo .sobre-tapa{ animation:sobreRasgar .55s .3s cubic-bezier(.3,-.4,.6,1) forwards; }
+    .sobre-abriendo .sobre-flash{ animation:sobreFogonazo .7s .34s ease-out forwards; }
+    .sobre-abriendo .sobre-svg{ animation:sobreIrse .45s .5s ease-in forwards; }
+    /* Fase 3 */
+    .sobre-abierto .sobre-paquete{ display:none; }
+    .sobre-cartas, .sobre-listo{ display:none; }
+    .sobre-abierto .sobre-cartas{ display:flex; }
+    .sobre-abierto .sobre-listo{ display:block; }
+    /* Quien pidió menos movimiento no tiene por qué esperar el rasgado: va
+       derecho a las cartas. La sorpresa es el contenido, no la animación. */
+    @media (prefers-reduced-motion: reduce){
+      .sobre-paquete, .sobre-tip, .sobre-brillo{ animation:none; }
+      .sobre-abriendo .sobre-paquete,
+      .sobre-abriendo .sobre-tapa,
+      .sobre-abriendo .sobre-flash,
+      .sobre-abriendo .sobre-svg{ animation-duration:.01s; animation-delay:0s; }
+    }
+
+    .sobre-cartas{
+      gap:10px; justify-content:center; margin-bottom:14px;
+    }
+    .sobre-carta{
+      width:30%; max-width:120px; opacity:0; transform:rotateY(90deg) scale(.8);
+      animation:figuFlip .55s cubic-bezier(.2,.9,.3,1.2) forwards;
+    }
+    .sobre-carta svg{ width:100%; height:auto; display:block; border-radius:10px; }
+    .sobre-carta.sobre-leyenda svg{
+      box-shadow:0 0 22px rgba(245,197,24,.85);
+      border-radius:10px;
+      animation:leyendaGlow 1s ease-in-out infinite alternate;
+    }
+    @keyframes figuFlip{
+      to{ opacity:1; transform:rotateY(0) scale(1); }
+    }
+    @keyframes leyendaGlow{
+      from{ box-shadow:0 0 12px rgba(245,197,24,.5); }
+      to  { box-shadow:0 0 28px rgba(245,197,24,1); }
+    }
+    /* ── Zoom de figurita ── */
+    #figu-zoom-overlay{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.82); z-index:1200;
+    }
+    #figu-zoom-overlay.show{ display:flex; }
+    .figu-zoom-panel{ max-width:240px; }
+    .figu-zoom-card{ width:160px; max-width:60vw; margin:0 auto 12px; animation:figuFlip .35s cubic-bezier(.2,.9,.3,1.2) both; }
+    .figu-zoom-card svg{ width:100%; height:auto; display:block; border-radius:10px; }
+    .figu-zoom-nombre{
+      font-family:'Oswald',sans-serif; font-size:14px; font-weight:700; color:#fff;
+    }
+    .figu-zoom-meta{
+      font-family:'Oswald',sans-serif; font-size:10px; color:rgba(255,255,255,.7);
+      margin:4px 0 2px;
+    }
+    .figu-zoom-cant{
+      font-family:'Oswald',sans-serif; font-size:9px; color:var(--gold,#f5c518);
+      margin-bottom:8px;
+    }
+    .figu-zoom-bio{
+      font-family:var(--f-body); font-style:italic;
+      font-size:11px; line-height:1.4; color:rgba(255,255,255,.82);
+      margin:6px auto 8px; max-width:220px;
+    }
+    /* ── Rating + stats en el zoom de figurita ── */
+    .figu-zoom-rating{
+      font-family:'Oswald',sans-serif; font-size:26px; font-weight:800; line-height:1;
+      margin:6px 0 8px;
+    }
+    .figu-zoom-rating span{ font-size:10px; opacity:.7; font-weight:700; }
+    .figu-zoom-stats{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:6px 10px;
+      max-width:200px; margin:0 auto 10px;
+    }
+    .figu-stat{
+      display:flex; align-items:baseline; justify-content:center; gap:4px;
+      background:rgba(255,255,255,.06); border-radius:6px; padding:3px 4px;
+    }
+    .figu-stat-val{ font-family:'Oswald',sans-serif; font-size:14px; font-weight:800; color:#fff; }
+    .figu-stat-lbl{ font-family:'Oswald',sans-serif; font-size:8px; font-weight:700; color:rgba(255,255,255,.6); letter-spacing:.5px; }
+    /* Temblor dramático cuando sale una LEYENDA en el sobre */
+    .sobre-carta.sobre-leyenda{ animation:figuFlip .55s cubic-bezier(.2,.9,.3,1.2) forwards, leyendaShake 1.6s .6s ease-in-out 2; }
+    @keyframes leyendaShake{
+      0%,100%{ transform:translateX(0) rotate(0); }
+      20%{ transform:translateX(-3px) rotate(-1.5deg); }
+      40%{ transform:translateX(3px) rotate(1.5deg); }
+      60%{ transform:translateX(-2px) rotate(-1deg); }
+      80%{ transform:translateX(2px) rotate(1deg); }
+    }
+    /* ── Brillo holográfico (foil) en cartas leyenda y oro ── */
+    .foil{ position:relative; isolation:isolate; }
+    .foil::after{
+      content:""; position:absolute; inset:0; border-radius:9px; pointer-events:none; z-index:4;
+      background:linear-gradient(115deg, transparent 28%, rgba(255,255,255,.55) 42%,
+        rgba(150,210,255,.38) 48%, rgba(205,150,255,.38) 54%, rgba(255,220,150,.38) 60%, transparent 74%);
+      background-size:250% 100%;
+      mix-blend-mode:screen;
+      animation:foilSweep 3.2s linear infinite;
+      opacity:.8;
+    }
+    .foil-oro::after{ animation-duration:3.8s; opacity:.6; }
+    @keyframes foilSweep{ 0%{ background-position:130% 0 } 100%{ background-position:-30% 0 } }
+    @media (prefers-reduced-motion: reduce){ .foil::after{ animation:none; opacity:.35 } }
+    /* ── Badge de sobres en el FAB ── */
+    .fab-album{ position:relative; }
+    .fab-badge{
+      position:absolute; top:-4px; right:-4px;
+      min-width:16px; height:16px; border-radius:8px;
+      background:#e0151d; color:#fff; font-size:9px; font-weight:700;
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Oswald',sans-serif; padding:0 3px;
+      border:1px solid #fff;
+    }
+    /* ══ Modal de reglas de la liga ══ */
+    .lr-intro{
+      font-family:'Oswald',sans-serif; font-size:12px; color:var(--gold,#f5c518);
+      text-align:center; margin:4px 0 10px; letter-spacing:1px;
+    }
+    .lr-item{
+      display:flex; align-items:flex-start; gap:10px;
+      font-family:'Oswald',sans-serif; font-size:11px; line-height:1.45;
+      color:#fff; padding:6px 4px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .lr-item:last-of-type{ border-bottom:none; }
+    .lr-item b{ color:var(--gold,#f5c518); font-weight:600; }
+    .lr-ico{ font-size:15px; line-height:1.2; flex-shrink:0; }
+    @media (max-width:380px){
+      .equipo-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+    }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LOADING
+     ══════════════════════════════════════════ -->
+<div id="loading">
+  <!-- El escudo oficial también en el arranque (el título de texto sobraba:
+       la marca ya lo dice). Con dimensiones fijas para que la barra no salte
+       cuando la imagen termina de decodificar. -->
+  <img class="ld-escudo" src="images/escudo-juego.webp" alt="TRUCO GOL"
+       width="180" height="180" decoding="async">
+  <div class="ld-suits"><svg class="palo-esp" viewBox="0 0 24 24"><path d="M12 2.5 L14.4 13 L12 15.8 L9.6 13 Z"/><line x1="7.5" y1="15.5" x2="16.5" y2="15.5"/><line x1="12" y1="15.8" x2="12" y2="21"/></svg><svg class="palo-esp" viewBox="0 0 24 24"><path d="M13.8 15.6 C10 12.5 10.6 5.6 14.6 3.4 C18.6 5.6 19.2 12.5 15.4 15.6 C14.9 16 14.3 16 13.8 15.6 Z"/><line x1="14.2" y1="16" x2="9" y2="21"/></svg><svg class="palo-esp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.4"/></svg><svg class="palo-esp" viewBox="0 0 24 24"><path d="M7 3.5 H17 V8.5 C17 11.5 15 13.5 12 13.5 C9 13.5 7 11.5 7 8.5 Z"/><line x1="12" y1="13.5" x2="12" y2="18.5"/><line x1="8" y1="20.5" x2="16" y2="20.5"/></svg></div>
+  <div class="ld-bar-bg"><div class="ld-bar" id="lbar"></div></div>
+  <div class="ld-msg" id="lmsg">Preparando la cancha…</div>
+</div>
+<script>
+/* La pantalla de carga VIVA. Antes decía "Iniciando motor..." fijo sobre
+   una barra que arrancaba en 0% y que NADIE actualizaba jamás: en 4G (el
+   juego entero viene en este HTML) parecía colgada. Va inline acá arriba,
+   antes de los scripts pesados, para animar mientras bajan. La barra sube
+   sola hasta 90% y clava el 100% en window.load; juego.js la oculta ahí
+   mismo. */
+(function () {
+  var bar = document.getElementById("lbar"), msg = document.getElementById("lmsg");
+  if (!bar || !msg) return;
+  var frases = ["Preparando la cancha…", "Inflando la pelota…",
+                "Acomodando a la hinchada…", "Mezclando el mazo…"];
+  var i = 0;
+  var rot = setInterval(function () { i = (i + 1) % frases.length; msg.textContent = frases[i]; }, 1300);
+  var p = 0;
+  var tick = setInterval(function () {
+    p += Math.max(0.4, (90 - p) * 0.06);
+    if (p > 90) p = 90;
+    bar.style.width = p + "%";
+  }, 120);
+  window.addEventListener("load", function () {
+    clearInterval(tick); clearInterval(rot);
+    bar.style.width = "100%";
+  });
+})();
+</script>
+
+<!-- ══════════════════════════════════════════
+     MENÚ PRINCIPAL
+     ══════════════════════════════════════════ -->
+<div id="main-menu">
+
+  <!-- Cancha SVG de fondo -->
+  <div class="mm-cancha" aria-hidden="true">
+    <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- Línea central -->
+      <line x1="0" y1="300" x2="400" y2="300" stroke="#fff" stroke-width="2"/>
+      <!-- Círculo central -->
+      <circle cx="200" cy="300" r="60" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Punto central -->
+      <circle cx="200" cy="300" r="4" fill="#fff"/>
+      <!-- Área grande arriba -->
+      <rect x="80" y="20" width="240" height="110" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Área chica arriba -->
+      <rect x="130" y="20" width="140" height="55" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Arco arriba -->
+      <rect x="165" y="5" width="70" height="20" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Área grande abajo -->
+      <rect x="80" y="470" width="240" height="110" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Área chica abajo -->
+      <rect x="130" y="525" width="140" height="55" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Arco abajo -->
+      <rect x="165" y="575" width="70" height="20" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Borde cancha -->
+      <rect x="10" y="10" width="380" height="580" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Franjas de pasto alternado -->
+      <rect x="10" y="10"  width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="106" width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="202" width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="298" width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="394" width="380" height="48" fill="#fff" opacity=".025"/>
+      <rect x="10" y="490" width="380" height="48" fill="#fff" opacity=".025"/>
+    </svg>
+  </div>
+
+  <!-- Confetti celeste y blanco -->
+  <div class="mm-confetti" aria-hidden="true">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="mm-content">
+
+    <!-- H1 real para Google — auditoría SEO del 31 jul: el index no tenía
+         NINGÚN h1 (el título visual es el escudo, una imagen). Oculto
+         visualmente (clase .sr-only, ver styles/style.css) para no
+         duplicar el escudo en pantalla; el texto lleva las mismas
+         palabras de intención que el <title>. -->
+    <h1 class="sr-only">Truco GOL — Jugá al Truco Argentino Online Gratis</h1>
+
+    <!-- Escudo SVG Argentina -->
+    <!-- Escudo oficial del juego (arte de Chucho, 2026-07). La imagen trae
+         fondo negro puro: mix-blend-mode screen lo funde con el fondo oscuro
+         del menú sin recortes ni halos. Reemplaza al viejo escudo SVG "AFA"
+         y al título de texto (la marca ya incluye TRUCO GOL). -->
+    <img class="mm-escudo-img" src="images/escudo-juego.webp" alt="TRUCO GOL — Truco Argentino" draggable="false">
+
+    <nav class="mm-nav">
+
+      <!-- ══ JUGAR YA — arranque instantáneo vs IA, sin registro ══ -->
+      <button class="mm-btn mm-btn-primary mm-acc-jugarya" onclick="jugarYa()">
+        <span class="mm-btn-icon">⚡</span>
+        <span class="mm-btn-text">
+          <strong>PICADITO</strong>
+          <small>Una manito rápida contra la IA · sin vueltas ni registro</small>
+        </span>
+        <span class="mm-badge mm-badge-gold">RÁPIDO</span>
+      </button>
+
+      <!-- ══ JUGAR POR DINERO: FUERA del menú público (decisión 2026-07-25).
+           Las apuestas van por el circuito del grupo de WhatsApp (bot de
+           torneos); acá no se promociona. El flujo casaAbrirPanel() sigue
+           vivo y accesible desde el botón 💰 del menú ☰ de la mesa. ══ -->
+
+      <!-- ══ MODO DT — carrera y copas ══ -->
+      <div class="mm-seccion" id="mm-seccion-modo-dt"><span>⚽ MODO DT</span></div>
+
+      <!-- Torneo de Liga: la ÚNICA entrada a #name-screen (registro de DT:
+           elegir club, elegir avatar, ver las reglas de la liga). Hasta el
+           1-ago-2026 ningún botón del menú llevaba ahí — el único llamador
+           vivo de irA('name-screen') estaba dentro de iniciarTorneoRapido()
+           (src/ui/extras.js), así que la Liga entera solo se alcanzaba
+           entrando por Torneo Rápido, de casualidad. -->
+      <button class="mm-btn mm-btn-primary mm-acc-liga" onclick="irA('name-screen')">
+        <span class="mm-btn-icon">🏅</span>
+        <span class="mm-btn-text">
+          <strong>TORNEO DE LIGA</strong>
+          <small>Elegí tu club y jugá el torneo fecha por fecha</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-primary mm-acc-manager" onclick="clubAbrir()">
+        <span class="mm-btn-icon">🏟️</span>
+        <span class="mm-btn-text">
+          <strong>CARRERA · DIRIGÍ TU CLUB</strong>
+          <small>Liga, fichajes e instalaciones · <span id="club-menu-money">Comenzar</span></small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-copa mm-acc-liberta" onclick="copaAbrir('libertadores')">
+        <span class="mm-btn-icon">🏆</span>
+        <span class="mm-btn-text">
+          <strong>COPA LIBERTADORES</strong>
+          <small>Grupos + llave · Los grandes de Sudamérica</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-copa mm-acc-champions" onclick="copaAbrir('champions')">
+        <span class="mm-btn-icon">⭐</span>
+        <span class="mm-btn-text">
+          <strong>CHAMPIONS LEAGUE</strong>
+          <!-- "y más" no existía: copaPool("europa") junta solo las ligas con
+               region:"europa", que son LaLiga y Premier. Sin Bayern, PSG ni Juve. -->
+          <small>LaLiga y Premier · Elite europea</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-copa mm-acc-mundial" onclick="irA('mundial-screen')">
+        <span class="mm-btn-icon">🌍</span>
+        <span class="mm-btn-text">
+          <strong>MUNDIAL 2026</strong>
+          <small>48 selecciones · 12 grupos · Eliminación directa</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-btn-copa mm-btn-cwc mm-acc-cwc" onclick="copaAbrir('cwc')">
+        <span class="mm-btn-icon">👑</span>
+        <span class="mm-btn-text">
+          <strong>MUNDIAL DE CLUBES</strong>
+          <small>Campeón de América vs campeón de Europa</small>
+        </span>
+      </button>
+
+      <!-- ══ PARTIDA RÁPIDA — sin dinero real ══ -->
+      <div class="mm-seccion"><span>🎮 PARTIDA RÁPIDA · SIN APUESTA</span></div>
+
+      <button class="mm-btn mm-acc-amistoso" onclick="irA('amistoso-screen')">
+        <span class="mm-btn-icon">🤝</span>
+        <span class="mm-btn-text">
+          <strong>PARTIDO AMISTOSO</strong>
+          <small>Elegí los dos equipos · Sin ranking ni liga</small>
+        </span>
+      </button>
+
+      <button class="mm-btn mm-acc-2v2" onclick="iniciar2v2()">
+        <span class="mm-btn-icon">👥</span>
+        <span class="mm-btn-text">
+          <strong>2 VS 2 (DE A PARES)</strong>
+          <small>Vos + compañero IA contra 2 rivales · Nuevo</small>
+        </span>
+        <span class="mm-badge mm-badge-gold">BETA</span>
+      </button>
+
+      <button class="mm-btn mm-acc-2v2" onclick="online2v2()">
+        <span class="mm-btn-icon">🌐</span>
+        <span class="mm-btn-text">
+          <strong>2 VS 2 ONLINE</strong>
+          <small>Sala de 4 por código · asientos vacíos = bots</small>
+        </span>
+        <span class="mm-badge mm-badge-gold">BETA</span>
+      </button>
+
+      <!-- ══ ONLINE — sección propia (4 ago 2026, pedido de Chucho) ══
+           Los dos caminos para jugar contra una persona estaban sueltos
+           dentro de "PARTIDA RÁPIDA", mezclados con el amistoso contra la
+           IA. Acá tienen su propio título plegable, que además es lo que
+           el jugador viene a buscar desde el grupo de WhatsApp.
+           El acordeón etiqueta por ORDEN (ver src/ui/menu_fx.js): todo lo
+           que va debajo de este título pertenece a esta sección. -->
+      <div class="mm-seccion" id="mm-seccion-online"><span>🌐 ONLINE</span></div>
+
+      <button class="mm-btn mm-acc-online" onclick="irA('online-screen')">
+        <span class="mm-btn-icon">🌐</span>
+        <span class="mm-btn-text">
+          <strong>BUSCAR RIVAL</strong>
+          <small>Te emparejamos con alguien que esté buscando partida</small>
+        </span>
+      </button>
+
+      <!-- Publicado el 4 ago: es el camino de "jugar con un amigo". Va con la
+           mesa AUTORITATIVA (abajo) y no con el relay de arriba a propósito —
+           en el relay el que crea la sala puede leer la mano del rival con
+           devtools, y este es justamente el flujo que se usa para las mesas
+           que se arman por el grupo de WhatsApp. -->
+      <button class="mm-btn mm-acc-online" onclick="auto1v1Abrir()">
+        <span class="mm-btn-icon">🤝</span>
+        <span class="mm-btn-text">
+          <strong>JUGAR CON UN AMIGO</strong>
+          <small>Armás la mesa y le pasás el link · nadie puede ver tus cartas</small>
+        </span>
+      </button>
+
+      <!-- ══ MESA 1v1 AUTORITATIVA (BETA) — punto 4 de la auditoría del
+           online (2 ago): acá el motor corre en el server, no en el
+           navegador del host, así que ninguno de los dos puede ver la
+           mano del otro. Primera versión jugable, separada a propósito
+           del "PARTIDO ONLINE" de arriba (peer-hosted) hasta que se
+           pruebe en la calle. ══ -->
+      <!-- El botón "MESA 1v1 (SERVIDOR) · BETA" que vivía acá se retiró el
+           4 ago: esta misma pantalla ahora se publica arriba como "JUGAR CON
+           UN AMIGO", con nombre de jugador en vez de nombre de arquitectura.
+           Dos botones para la misma mesa solo confundían. -->
+
+      <button class="mm-btn mm-acc-online" onclick="irA('amigos-screen')">
+        <span class="mm-btn-icon">👥</span>
+        <span class="mm-btn-text">
+          <strong>AMIGOS</strong>
+          <small>Entrá con el link o código que te pasó el admin</small>
+        </span>
+      </button>
+
+      <!-- ══ ANOTADOR — último y SIEMPRE visible (4 ago 2026) ══
+           No es un modo de juego: es la herramienta para la partida de
+           mesa real, así que va al final y FUERA del acordeón. El
+           data-mm-fuera lo saca del etiquetado por secciones de
+           menu_fx.js — sin eso quedaría dentro de "ONLINE" (que es el
+           título que tiene arriba) y desaparecería al plegarla. -->
+      <button class="mm-btn mm-acc-anotador" data-mm-fuera="1" onclick="irA('anotador-screen')">
+        <span class="mm-btn-icon">📋</span>
+        <span class="mm-btn-text">
+          <strong>ANOTADOR</strong>
+          <small>Llevá los tantos de tu partida presencial</small>
+        </span>
+      </button>
+
+    </nav>
+
+    <div class="mm-footer">
+      <button class="mm-link" onclick="openModal('liga-modal')">🏆 Liga</button>
+      <button class="mm-link" onclick="openModal('album-modal')">📒 Álbum</button>
+      <button class="mm-link" onclick="openModal('tutorial-modal')">📜 Reglas</button>
+      <button class="mm-link" onclick="openModal('settings-modal')">⚙️ Ajustes</button>
+      <button class="mm-link" onclick="openModal('stats-modal')">📊 Stats</button>
+      <button class="mm-link" onclick="window.open('https://chat.whatsapp.com/IHjXszC7p1Q7TJaXjO8kyk','_blank','noopener')">🟢 Grupo WhatsApp</button>
+    </div>
+
+    <!-- Los dos enlaces del pie son <a href> de verdad y están SIEMPRE en el
+         DOM (los del modal de Reglas también, pero estos se ven sin abrir
+         nada). Son la única vía por la que Google llega a esas páginas: el
+         resto del menú son botones con onclick, que un crawler no sigue. -->
+    <nav class="mm-seo" aria-label="Guías del truco">
+      <a href="como-jugar.html">Cómo jugar al truco</a>
+      <span aria-hidden="true">·</span>
+      <a href="reglamento.html">Reglamento completo</a>
+    </nav>
+
+    <div class="mm-version">TRUCO GOL · fútbol + truco · v1.0</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANTALLA DE REGISTRO (JUGAR vs IA)
+     ══════════════════════════════════════════ -->
+<div id="name-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+  <div class="ns-title">REGISTRO DEL DT</div>
+  <div class="ns-sub">Elegí tu avatar de director técnico y el club que vas a dirigir</div>
+  <div class="avatar-grid" id="avatar-grid"></div>
+  <input type="text" id="name-input" class="name-input" placeholder="Nombre del DT (Ej: El Míster)" maxlength="12">
+  <div id="eq-cat-container"></div>
+  <div class="equipo-elegido-lbl" id="equipo-elegido-lbl"></div>
+  <button class="btn primary" onclick="setName()">⚽ SALIR A LA CANCHA</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PARTIDO AMISTOSO (elegís los dos equipos)
+     ══════════════════════════════════════════ -->
+<div id="amistoso-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+  <div class="ns-title">PARTIDO AMISTOSO</div>
+  <div class="ns-sub">Elegí los dos equipos que se van a enfrentar</div>
+
+  <div class="am-section-title">⚽ Tu equipo</div>
+  <div id="eq-cat-container-amistoso-j"></div>
+  <div class="equipo-elegido-lbl" id="amistoso-eq-j-lbl"></div>
+
+  <div class="am-vs">VS</div>
+
+  <div class="am-section-title">🆚 Rival</div>
+  <div id="eq-cat-container-amistoso-r"></div>
+  <div class="equipo-elegido-lbl" id="amistoso-eq-r-lbl"></div>
+
+  <button class="btn primary" id="btn-jugar-amistoso" onclick="iniciarPartidoAmistoso()" disabled>⚽ JUGAR AMISTOSO</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MUNDIAL 2026 (48 selecciones, grupos + cuadro)
+     ══════════════════════════════════════════ -->
+<div id="mundial-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+  <div class="ns-title">MUNDIAL 2026</div>
+  <div class="ns-sub">48 selecciones · 12 grupos · cuadro de eliminación directa</div>
+
+  <div id="mundial-setup">
+    <div class="am-section-title">🌍 Elegí tu selección</div>
+    <div id="mundial-eq-container"></div>
+    <div class="equipo-elegido-lbl" id="mundial-eq-lbl"></div>
+    <button class="btn primary" id="btn-mundial-empezar" onclick="mundialEmpezar()" disabled>🏆 EMPEZAR MUNDIAL</button>
+  </div>
+
+  <div id="mundial-en-curso">
+    <div id="mundial-info"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ANOTADOR
+     ══════════════════════════════════════════ -->
+<div id="anotador-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+
+  <div class="an-header">
+    <div class="an-title">ANOTADOR</div>
+    <div class="an-sub">Partida entre dos jugadores</div>
+  </div>
+
+  <!-- Nombres -->
+  <div class="an-names">
+    <div class="an-team">
+      <input type="text" class="an-name-input" id="an-name-j" placeholder="Jugador 1" maxlength="10" oninput="anActualizar()">
+    </div>
+    <div class="an-vs">vs</div>
+    <div class="an-team rival">
+      <input type="text" class="an-name-input rival" id="an-name-r" placeholder="Jugador 2" maxlength="10" oninput="anActualizar()">
+    </div>
+  </div>
+
+  <!-- Modo de juego -->
+  <div class="an-mode-row">
+    <button class="an-mode-btn active" id="an-mode-30" onclick="anSetMode(30)">A 30</button>
+    <button class="an-mode-btn" id="an-mode-15" onclick="anSetMode(15)">A 15</button>
+    <span class="an-mode-sep">|</span>
+    <button class="an-mode-btn" id="an-mode-bo3" onclick="anSetMode('bo3')">MJ3</button>
+  </div>
+
+  <!-- Tanteador con fósforos — panel principal -->
+  <div class="an-tanteador">
+    <!-- Equipo 1 -->
+    <div class="an-team-panel" id="an-panel-j">
+      <div class="an-team-name" id="an-lbl-j">Jugador 1</div>
+      <div class="an-fosforos" id="an-fosforos-j"></div>
+      <div class="an-pts-big" id="an-pts-j">0</div>
+      <div class="an-btn-row">
+        <button class="an-minus" onclick="anSumar('j', -1)">−</button>
+        <button class="an-plus"  onclick="anSumar('j', +1)">+1</button>
+        <button class="an-plus2" onclick="anSumar('j', +2)">+2</button>
+        <button class="an-plus3" onclick="anSumar('j', +3)">+3</button>
+      </div>
+    </div>
+
+    <!-- Separador central con progreso -->
+    <div class="an-center">
+      <div class="an-progress-wrap">
+        <div class="an-prog-j" id="an-prog-j" style="height:0%"></div>
+        <div class="an-prog-r" id="an-prog-r" style="height:0%"></div>
+      </div>
+      <div class="an-limit-lbl" id="an-limit-lbl">30</div>
+    </div>
+
+    <!-- Equipo 2 -->
+    <div class="an-team-panel rival" id="an-panel-r">
+      <div class="an-team-name rival" id="an-lbl-r">Jugador 2</div>
+      <div class="an-fosforos" id="an-fosforos-r"></div>
+      <div class="an-pts-big rival" id="an-pts-r">0</div>
+      <div class="an-btn-row">
+        <button class="an-minus" onclick="anSumar('r', -1)">−</button>
+        <button class="an-plus rival"  onclick="anSumar('r', +1)">+1</button>
+        <button class="an-plus2 rival" onclick="anSumar('r', +2)">+2</button>
+        <button class="an-plus3 rival" onclick="anSumar('r', +3)">+3</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historial -->
+  <div class="an-historial-wrap">
+    <div class="an-historial-title">HISTORIAL DE LA MANO</div>
+    <div class="an-historial" id="an-historial"></div>
+  </div>
+
+  <!-- Acciones inferiores -->
+  <div class="an-actions">
+    <button class="btn" onclick="anNuevaMano()">↺ NUEVA MANO</button>
+    <button class="btn primary" onclick="anGuardarPartida()">💾 GUARDAR PARTIDA</button>
+    <button class="btn danger" onclick="anReset()">✕ REINICIAR</button>
+  </div>
+
+  <!-- Banner ganador -->
+  <div class="an-winner-banner" id="an-winner-banner" style="display:none">
+    <div class="an-winner-text" id="an-winner-text">🏆 ¡GANÓ JUGADOR 1!</div>
+    <button class="btn primary" onclick="anReset()">NUEVA PARTIDA</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     COPAS DE CLUBES (Libertadores / Champions) — copas.js
+     ══════════════════════════════════════════ -->
+<div id="copa-screen">
+  <div id="copa-content"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PARTIDO ONLINE (1v1 por internet)
+     ══════════════════════════════════════════ -->
+<div id="online-screen">
+  <button class="back-btn" onclick="onlineVolver()">← Volver</button>
+
+  <div class="ns-title">PARTIDO ONLINE</div>
+  <div class="ns-sub">Jugá una partida real contra otra persona, donde sea</div>
+
+  <!-- Menú principal: crear o unirse -->
+  <div class="online-card" id="online-menu">
+    <input type="text" id="online-nombre" class="name-input" placeholder="Tu nombre" maxlength="12">
+
+    <button class="btn primary online-big-btn" onclick="onlineBuscarPartida()">🎯 BUSCAR RIVAL</button>
+    <div class="online-sub">Te emparejamos al toque con alguien que esté buscando</div>
+
+    <div class="online-sep">— o jugá con un amigo —</div>
+
+    <button class="btn online-big-btn" onclick="onlineCrearSala()">🆕 CREAR SALA</button>
+
+    <div class="online-sep">— o —</div>
+
+    <div class="online-join-row">
+      <input type="text" id="online-codigo-input" class="online-code-input" placeholder="CÓDIGO" maxlength="5">
+      <button class="btn respond" onclick="onlineUnirseSala()">UNIRSE</button>
+    </div>
+
+    <!-- ⚙️ Servidor: herramienta de DEBUG (cambiar la URL del relay), no un
+         control de jugador. Oculta salvo localStorage trucogol_dev=1 — el
+         análisis externo la marcó como "debug a la vista" (8 ago 2026).
+         La destapa juego_online.js al cargar si el flag está puesto. -->
+    <button class="online-config-toggle" id="online-config-toggle" type="button" style="display:none"
+            onclick="onlineToggleConfig()">⚙️ Servidor</button>
+    <div class="online-config" id="online-config" style="display:none">
+      <input type="text" id="online-server-url" class="name-input" placeholder="wss://tu-servidor.onrender.com">
+      <button class="btn" onclick="onlineGuardarUrl()">Guardar dirección</button>
+    </div>
+
+    <div class="online-msg" id="online-menu-msg"></div>
+  </div>
+
+  <!-- Buscando rival en la cola pública -->
+  <div class="online-card" id="online-buscando" style="display:none">
+    <div class="online-spinner"></div>
+    <div class="online-waiting-msg" id="online-buscando-msg">Buscando rival...</div>
+    <button class="btn danger" onclick="onlineCancelarBusqueda()">CANCELAR</button>
+  </div>
+
+  <!-- Sala creada: esperando rival -->
+  <div class="online-card" id="online-waiting" style="display:none">
+    <div class="online-codigo-label">Código de sala</div>
+    <div class="online-codigo-big" id="online-codigo-big">-----</div>
+    <div class="online-sub">Compartile este código a tu rival</div>
+    <button class="btn primary online-big-btn" onclick="onlineCompartirWsp()">📲 COMPARTIR POR WHATSAPP</button>
+    <div class="online-spinner"></div>
+    <div class="online-waiting-msg" id="online-waiting-msg">Esperando al rival...</div>
+    <button class="btn danger" onclick="onlineCancelar()">CANCELAR</button>
+  </div>
+
+  <!-- Estado / errores -->
+  <div class="online-card" id="online-status" style="display:none">
+    <div id="online-status-msg" class="online-msg"></div>
+    <button class="btn" onclick="onlineVolverAlMenu()">VOLVER</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MESA 1v1 AUTORITATIVA (BETA) — src/ui/auto1v1_ui.js arma todo el
+     contenido en tiempo de carga; acá solo va el contenedor vacío.
+     ══════════════════════════════════════════ -->
+<div id="auto1v1-screen"></div>
+
+<!-- ══════════════════════════════════════════
+     AMIGOS (privado): entrar con el código/link
+     que generó el admin del grupo de WhatsApp,
+     y ver los torneos que armó. Separado de
+     "Online" para no mezclarlo con el matchmaking
+     público.
+     ══════════════════════════════════════════ -->
+<div id="amigos-screen">
+  <button class="back-btn" onclick="amigosVolver()">← Volver</button>
+
+  <div class="ns-title">AMIGOS</div>
+  <div class="ns-sub">Partidas y torneos privados organizados por WhatsApp</div>
+
+  <div class="online-card" id="amigos-menu">
+    <input type="text" id="amigos-nombre" class="name-input" placeholder="Tu nombre" maxlength="12">
+
+    <div class="online-join-row">
+      <input type="text" id="amigos-codigo-input" class="online-code-input" placeholder="CÓDIGO" maxlength="5">
+      <button class="btn respond" id="amigos-btn-unirse" onclick="amigosUnirseSala()">UNIRSE</button>
+    </div>
+    <div class="online-sub">Pegá el código o abrí directo el link que te mandó el admin por WhatsApp</div>
+
+    <div class="online-msg" id="amigos-menu-msg" aria-live="polite"></div>
+
+    <div class="online-sep">— torneos activos —</div>
+    <div id="amigos-torneos-lista"></div>
+  </div>
+
+  <!-- Conectado / esperando al rival de la sala privada -->
+  <div class="online-card" id="amigos-status" style="display:none">
+    <div id="amigos-status-msg" class="online-msg" aria-live="polite"></div>
+    <button class="btn" onclick="_amigosMostrarVista('amigos-menu')">VOLVER</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODO MANAGER (club)
+     ══════════════════════════════════════════ -->
+<div id="club-screen">
+  <button class="back-btn" onclick="irA('main-menu')">← Volver</button>
+  <div id="club-mount"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MESA DE JUEGO (vs IA)
+     ══════════════════════════════════════════ -->
+<div id="mesa">
+  <div class="zona-rival">
+    <div class="rival-top">
+      <img id="rival-avatar" class="rival-avatar rival-anim" src="data:," alt="Rival">
+      <img id="rival-escudo" class="escudo-mini" src="data:," alt="" style="display:none;">
+      <div class="rival-info">
+        <div id="rival-name-txt" class="rival-name-txt">Rival</div>
+        <div id="rival-mano-badge" class="mano-badge" style="display:none">🃏 Mano</div>
+      </div>
+    </div>
+    <div class="hand-row">
+      <div class="mazo-slot" id="mazo-slot-rival"></div>
+      <div class="rival-hand" id="rival-hand"></div>
+    </div>
+  </div>
+
+  <div class="zona-central">
+    <div class="thinking" id="thinking">
+      <span id="thinking-txt">Pensando...</span>
+      <div class="thinking-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <div id="mesa-central">
+      <div id="rondas-panel">
+        <div class="ronda-item"><span class="ronda-lbl">R1</span><span id="r1-ganador" class="ronda-ganador">-</span></div>
+        <div class="ronda-item"><span class="ronda-lbl">R2</span><span id="r2-ganador" class="ronda-ganador">-</span></div>
+        <div class="ronda-item"><span class="ronda-lbl">R3</span><span id="r3-ganador" class="ronda-ganador">-</span></div>
+      </div>
+      <div id="mesa-avatares"></div>
+    </div>
+
+    <div class="played-row" id="played-row">
+      <div id="drop-zone-overlay"></div>
+      <div id="drag-hint">⬆ Soltá aquí para jugar</div>
+      <div class="played-row-rival" id="played-row-rival"></div>
+      <div class="played-row-jugador" id="played-row-jugador"></div>
+    </div>
+
+  </div>
+
+  <div class="info-bar">
+    <div class="info-tantos" id="info-tantos">Tantos: --</div>
+    <div class="info-msg" id="info-msg">¡Bienvenidos al Truco Argentino!</div>
+    <div class="info-mano" id="info-mano">Mano: --</div>
+  </div>
+
+  <div id="zona-inferior">
+    <div class="club-perks-bar" id="club-perks-bar"></div>
+    <div class="acciones" id="acciones"></div>
+    <div class="reactions" id="reactions"></div>
+    <div class="zona-jugador">
+      <div class="hand-row">
+        <div class="mazo-slot" id="mazo-slot-jugador"></div>
+        <div class="player-hand" id="player-hand"></div>
+      </div>
+      <!-- Mazo sobrante: pila decorativa boca abajo. Se mueve por JS al
+           lado (rival/jugador) que sea "mano" en cada mano repartida. -->
+      <div class="mazo-pos" id="mazo-pos" title="Mazo">
+        <div class="mazo-carta dorso-trugol"></div>
+        <div class="mazo-carta dorso-trugol"></div>
+        <div class="mazo-carta dorso-trugol"></div>
+      </div>
+      <div class="player-bottom" style="margin-top:4px;">
+        <img id="player-avatar-sm" class="player-avatar-sm" src="data:," alt="Vos">
+        <img id="player-escudo" class="escudo-mini" src="data:," alt="" style="display:none; margin-left:4px;">
+        <div id="player-mano-badge" class="mano-badge" style="display:none; margin-left:4px;">🃏 Mano</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón menú dentro de la mesa -->
+  <button class="mesa-menu-btn" onclick="irA('main-menu')" title="Menú principal">☰</button>
+</div>
+
+<!-- #mesa-ranking ELIMINADO (8 ago 2026): era un TOP con 3 nombres y
+     puntos INVENTADOS, hardcodeados, que ningún JS actualizaba. Encima
+     la poda de la mesa ya lo tenía en display:none. Datos falsos +
+     código muerto = afuera. El ranking real vive en el botón 🏅. -->
+
+<!-- ══════════════════════════════════════════
+     PANEL LATERAL DE FÓSFOROS
+     ══════════════════════════════════════════ -->
+<div id="side-score">
+  <div class="side-score-inner">
+    <div class="side-score-pts"><span id="side-pts-j">0</span>-<span id="side-pts-r">0</span></div>
+    <div class="side-score-sub">PUNTOS</div>
+    <div class="side-progress-wrap">
+      <div class="side-prog-lbl" id="side-lbl-j">VOS</div>
+      <div class="side-prog-bar-bg"><div class="side-prog-j" id="side-pbar-j" style="width:0%"></div></div>
+      <div class="side-prog-lbl rival" id="side-lbl-r">RIV</div>
+      <div class="side-prog-bar-bg"><div class="side-prog-r" id="side-pbar-r" style="width:0%"></div></div>
+    </div>
+    <div class="side-pts-needed" id="side-pts-needed">F.30</div>
+    <div class="side-stake" id="side-stake" style="display:none"></div>
+    <div class="tant-fosforos">
+      <div class="tant-team-lbl" id="tant-lbl-j">VOS</div>
+      <div class="tant-cuadrados" id="cuadrados-jugador"></div>
+      <div class="tant-sep"></div>
+      <div class="tant-team-lbl rival" id="tant-lbl-r">RIVAL</div>
+      <div class="tant-cuadrados" id="cuadrados-rival"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL DE ACTIVIDAD (log de cantos y jugadas)
+     ══════════════════════════════════════════ -->
+<div id="panel-actividad">
+  <div class="pa-header">⚡ ACTIVIDAD</div>
+  <div class="pa-lista" id="pa-lista"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="envido-overlay">
+  <div class="envido-panel">
+    <div class="envido-title" id="eo-title">ENVIDO</div>
+    <div class="envido-scores">
+      <div class="envido-player">
+        <div class="envido-name" id="eo-name-j">VOS</div>
+        <div class="envido-pts" id="eo-pts-j">0</div>
+        <div class="envido-cards" id="eo-cards-j"></div>
+      </div>
+      <div class="envido-vs">vs</div>
+      <div class="envido-player">
+        <div class="envido-name" id="eo-name-r">RIVAL</div>
+        <div class="envido-pts" id="eo-pts-r">0</div>
+        <div class="envido-cards" id="eo-cards-r"></div>
+      </div>
+    </div>
+    <div class="envido-result" id="eo-res">¡Ganaste!</div>
+    <div class="envido-extra" id="eo-extra"></div>
+  </div>
+</div>
+
+<div id="canto-overlay">
+  <div class="canto-card" id="canto-card">
+    <div class="canto-label" id="canto-label">¡TRUCO!</div>
+    <div class="canto-quien" id="canto-quien">VOS</div>
+  </div>
+</div>
+
+<div id="resultado-overlay">
+  <div class="resultado-card" id="resultado-card">
+    <div class="resultado-titulo" id="resultado-titulo">GANASTE LA MANO</div>
+    <div class="resultado-puntos" id="resultado-puntos">+1</div>
+    <div class="resultado-marcador" id="resultado-marcador">0 - 0</div>
+
+    <div class="resultado-envido-reveal" id="resultado-envido-reveal">
+      <div class="rev-titulo" id="rev-titulo">ENVIDO</div>
+      <div class="rev-cartas">
+        <div class="rev-player">
+          <div class="rev-name" id="rev-name-j">VOS</div>
+          <div class="envido-cards" id="rev-cards-j"></div>
+        </div>
+        <div class="rev-player">
+          <div class="rev-name" id="rev-name-r">RIVAL</div>
+          <div class="envido-cards" id="rev-cards-r"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODALES
+     ══════════════════════════════════════════ -->
+<!-- #result-modal ELIMINADO (8 ago 2026): modal fósil que ningún código
+     abría — el fin de partido lo maneja la tarjeta de juego_ui.js. Adentro
+     tenía un <img src="data:,"> roto que el análisis externo marcó. -->
+
+<div class="modal" id="stats-modal">
+  <div class="modal-box">
+    <h2>Estadísticas Generales</h2>
+    <div class="stat-row">Partidas Jugadas: <span class="stat-val" id="st-jugadas">0</span></div>
+    <div class="stat-row">Partidas Ganadas: <span class="stat-val" id="st-ganadas">0</span></div>
+    <div class="stat-row">Partidas Perdidas: <span class="stat-val" id="st-perdidas">0</span></div>
+    <div class="stat-row">Efectividad: <span class="stat-val" id="st-efectividad">0%</span></div>
+    <div class="stat-row">Puntos Totales: <span class="stat-val" id="st-puntos">0</span></div>
+    <div style="margin-top:12px; font-weight:bold; font-size:12px; color:var(--gold);">HISTORIAL RECIENTE</div>
+    <div class="hist-list" id="st-historial"></div>
+    <button class="btn primary" style="margin-top:12px; width:100%;" onclick="closeModal('stats-modal')">CERRAR</button>
+  </div>
+</div>
+
+<div class="modal" id="settings-modal">
+  <div class="modal-box">
+    <h2>Ajustes del Juego</h2>
+    <!-- Identidad (4 ago 2026): con el menú reducido la pantalla de registro
+         quedó atrás de "TORNEO DE LIGA", que está oculto — o sea inalcanzable.
+         Resultado: TODOS los jugadores eran "El Gaucho". Este bloque es la
+         única vía publicada para ponerse nombre y elegir club.
+         El placeholder ya no dice "El Gaucho": ese nombre dejó de ser el
+         default (ver NOMBRE_DEFAULT en src/ui/juego_ui.js) y mostrarlo acá
+         lo hacía parecer un nombre ya puesto. -->
+    <div class="setting-row">
+      <div style="flex:1">
+        <div class="setting-lbl">Tu nombre</div>
+        <div class="setting-sub">Como te ven en la mesa y al compartir el resultado</div>
+        <input type="text" id="opt-nombre" maxlength="18" placeholder="Tu nombre o apodo"
+               oninput="guardarNombreJugador(this.value)"
+               style="margin-top:7px;width:100%;max-width:230px;padding:7px 10px;border-radius:7px;
+                      border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.35);
+                      color:inherit;font:inherit;font-size:14px;">
+      </div>
+    </div>
+    <!-- Código de jugador (4 ago 2026): es lo que hay que mandar al grupo
+         para anotarse a un torneo. NO es el token del dispositivo —de ese
+         se deriva, sin vuelta atrás— justamente porque esto se pega en un
+         chat a la vista de todos. Ver codigoJugadorPublico() en
+         src/saldoServer.js y codigoPublicoDe() en server/cuadro.js. -->
+    <div class="setting-row">
+      <div style="flex:1">
+        <div class="setting-lbl">Tu código de jugador</div>
+        <div class="setting-sub">Mandalo al grupo para que te anoten en un torneo</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:7px;flex-wrap:wrap;">
+          <code id="opt-codigo" style="font-family:var(--f-display,monospace);font-size:17px;letter-spacing:2px;
+                 background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);border-radius:7px;
+                 padding:7px 12px;">…</code>
+          <button class="btn" id="opt-codigo-copiar" onclick="copiarCodigoJugador()"
+                  style="padding:7px 14px;font-size:13px;">📋 COPIAR</button>
+        </div>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div style="flex:1">
+        <div class="setting-lbl">Tu club</div>
+        <div class="setting-sub">Define tu escudo, tu hincha y la tribuna de tu lado</div>
+        <select id="opt-club" onchange="guardarClubJugador(this.value)"
+                style="margin-top:7px;width:100%;max-width:230px;padding:7px 10px;border-radius:7px;
+                       border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.35);
+                       color:inherit;font:inherit;font-size:14px;"></select>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Regla de la Flor</div><div class="setting-sub">3 cartas del mismo palo: Flor, Contraflor y Contraflor al Resto</div></div>
+      <div class="toggle" id="opt-flor" onclick="toggleOpt('flor')"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Dificultad IA</div><div class="setting-sub" id="ia-dificultad-info">Depende del equipo rival (ranking/fuerza)</div></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Efectos de Sonido</div><div class="setting-sub">Sintetizador de audio nativo</div></div>
+      <div class="toggle" id="opt-sound" onclick="toggleOpt('sound')"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Modo Rápido (15 pts)</div><div class="setting-sub">Partidas a 15 puntos (Chico)</div></div>
+      <div class="toggle" id="opt-fast" onclick="toggleOpt('fast')"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-lbl">Marcador de Fósforos Lateral</div><div class="setting-sub">Muestra el tanteador a la derecha</div></div>
+      <div class="toggle" id="opt-sidescore" onclick="toggleOpt('sidescore')"></div>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-lbl">Color del Tapete</div>
+        <div class="theme-btns">
+          <div class="theme-dot t-green" id="th-green" onclick="setTheme('green')"></div>
+          <div class="theme-dot t-red"   id="th-red"   onclick="setTheme('red')"></div>
+          <div class="theme-dot t-blue"  id="th-blue"  onclick="setTheme('blue')"></div>
+          <div class="theme-dot t-dark"  id="th-dark"  onclick="setTheme('dark')"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Respaldo (8 ago 2026): todo el progreso vive en localStorage; un
+         "borrar datos de navegación" y se pierde el club, la liga y el
+         álbum enteros. Funciones en features_storage.js. -->
+    <div class="setting-row">
+      <div style="flex:1">
+        <div class="setting-lbl">Respaldo del progreso</div>
+        <div class="setting-sub">Generá un código con TODO tu progreso (club, liga, álbum, fichas) y guardalo en un chat o una nota. Con RESTAURAR lo traés de vuelta acá o en otro dispositivo.</div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn" style="font-size:11px" onclick="progresoExportar()">📤 COPIAR RESPALDO</button>
+          <button class="btn" style="font-size:11px" onclick="progresoImportar()">📥 RESTAURAR</button>
+        </div>
+        <textarea id="opt-respaldo-ta" style="display:none;width:100%;margin-top:8px;height:74px;
+                  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);border-radius:7px;
+                  color:inherit;font-size:10px;padding:7px;word-break:break-all;"
+                  spellcheck="false" placeholder="Tu código de respaldo aparece (o se pega) acá"></textarea>
+      </div>
+    </div>
+    <button class="btn danger" style="margin-top:12px; font-size:9px;" onclick="resetStats()">RESETEAR DATOS</button>
+    <button class="btn primary" style="margin-top:12px; float:right;" onclick="closeModal('settings-modal')">GUARDAR</button>
+  </div>
+</div>
+
+<div class="modal" id="liga-reglas-modal">
+  <div class="modal-box">
+    <h2>⚽ Reglas de la Liga</h2>
+    <div class="lr-intro">¡Bienvenido, DT! Así se juega el torneo:</div>
+    <!-- Los números salen de LIGA.equipos en mostrarReglasLiga() (liga.js): estaban
+         escritos a mano ("20 clubes, 19 fechas") y no coincidían con ninguna liga
+         real —la Liga Profesional tiene 22— y menos desde que fundar un club en la
+         Carrera suma un equipo más. -->
+    <div class="lr-item"><span class="lr-ico">🏟️</span><div><b><span id="lr-clubes">22</span> clubes, <span id="lr-fechas">21</span> fechas.</b> El fixture es todos contra todos: cada fecha enfrentás al rival que te toca según el calendario (mirá la pestaña 📅 Fixture).</div></div>
+    <div class="lr-item"><span class="lr-ico">✅</span><div><b>Victoria: 3 puntos + 1 sobre de figuritas.</b> Llegá primero a los 30 (o 15 en modo rápido).</div></div>
+    <div class="lr-item"><span class="lr-ico">🟡</span><div><b>Derrota en las buenas: 1 punto.</b> Si perdés pero pasaste la mitad del tanteador, rescatás un punto (columna DB) y a veces un sobre.</div></div>
+    <div class="lr-item"><span class="lr-ico">❌</span><div><b>Derrota en las malas: 0 puntos.</b> Si te quedás en la primera mitad, te vas sin nada.</div></div>
+    <div class="lr-item"><span class="lr-ico">🎲</span><div><b>Mientras jugás, los otros <span id="lr-otros">20</span> clubes juegan su fecha</b> según el mismo fixture.</div></div>
+    <!-- Solo se muestra si la liga tiene cantidad IMPAR de equipos (lo llena
+         _reglasLigaNumeros en liga.js). Pasa apenas fundás un club: la Liga
+         Profesional queda en 23 y cada equipo descansa una fecha. -->
+    <div class="lr-item" id="lr-descanso-item" style="display:none"><span class="lr-ico">😴</span><div><b>Una fecha descansás.</b> Con <span id="lr-clubes2">23</span> clubes el fixture deja libre a un equipo por fecha: ese día no jugás y no sumás puntos.</div></div>
+    <div class="lr-item"><span class="lr-ico">🏆</span><div><b>A las <span id="lr-fechas2">21</span> fechas, el de más puntos es CAMPEÓN</b> y se lleva 5 sobres + 1 figurita LEYENDA garantizada. Del 2º al 4º: 2 sobres. El resto: 1 sobre.</div></div>
+    <div class="lr-item"><span class="lr-ico">📒</span><div><b>Álbum TRUGOL: 56 figuritas</b> de cracks del fútbol por rango (Leyenda, Oro, Plata, Común). ¡Completalo!</div></div>
+    <button class="btn primary" style="width:100%; margin-top:12px;" onclick="closeModal('liga-reglas-modal')">¡VAMOS, DT!</button>
+  </div>
+</div>
+
+<div class="modal" id="liga-modal">
+  <div class="modal-box">
+    <h2 id="liga-modal-title">🏆 Liga Profesional de Truco</h2>
+    <div class="liga-fecha" id="liga-fecha-lbl">Fecha 0 de 19</div>
+    <div class="liga-tabs">
+      <button class="liga-tab-btn active" id="liga-btn-tabla"   onclick="ligaSetTab('tabla')">📊 TABLA</button>
+      <button class="liga-tab-btn"        id="liga-btn-fixture" onclick="ligaSetTab('fixture')">📅 FIXTURE</button>
+    </div>
+    <div id="liga-tab-tabla">
+      <div class="liga-tabla-wrap" id="liga-tabla"></div>
+      <div class="liga-leyenda">★ Tu club · PG victoria 3 pts · DB derrota en las buenas 1 pt · PP derrota en las malas 0 pts</div>
+    </div>
+    <div id="liga-tab-fixture" style="display:none">
+      <div class="liga-fixture-wrap" id="liga-fixture"></div>
+    </div>
+    <button class="btn" style="margin-top:10px; font-size:9px;" onclick="closeModal('liga-modal'); openModal('liga-reglas-modal')">📜 REGLAS</button>
+    <button class="btn danger" style="margin-top:10px; font-size:9px;" onclick="ligaResetear()">↺ NUEVO TORNEO</button>
+    <button class="btn primary" style="margin-top:10px; float:right;" onclick="closeModal('liga-modal')">CERRAR</button>
+  </div>
+</div>
+
+<div class="modal" id="mundial-modal">
+  <div class="modal-box">
+    <h2 id="mundial-modal-title">🌍 Mundial 2026</h2>
+    <div class="liga-tabs">
+      <button class="liga-tab-btn active" id="mundial-btn-grupos"  onclick="mundialSetTab('grupos')">📊 GRUPOS</button>
+      <button class="liga-tab-btn"        id="mundial-btn-bracket" onclick="mundialSetTab('bracket')">🏆 CUADRO</button>
+    </div>
+    <div id="mundial-tab-grupos">
+      <div id="mundial-grupos"></div>
+      <div class="liga-leyenda">★ Tu selección · PG victoria 3 pts · DB derrota en las buenas 1 pt · PP derrota en las malas 0 pts · Clasifican 1º y 2º (+ mejores 8 terceros)</div>
+    </div>
+    <div id="mundial-tab-bracket" style="display:none">
+      <div id="mundial-bracket-cont"></div>
+    </div>
+    <button class="btn" style="margin-top:10px; font-size:9px;" onclick="closeModal('mundial-modal'); openModal('mundial-reglas-modal')">📜 REGLAS</button>
+    <button class="btn danger" style="margin-top:10px; font-size:9px;" onclick="mundialResetear()">↺ NUEVO MUNDIAL</button>
+    <button class="btn primary" style="margin-top:10px; float:right;" onclick="closeModal('mundial-modal')">CERRAR</button>
+  </div>
+</div>
+
+<div class="modal" id="mundial-reglas-modal">
+  <div class="modal-box">
+    <h2>🌍 Reglas del Mundial 2026</h2>
+    <div class="lr-intro">48 selecciones van por la Copa. Así se juega:</div>
+    <div class="lr-item"><span class="lr-ico">🏟️</span><div><b>12 grupos de 4 equipos, todos contra todos (3 fechas).</b> Jugás solo los partidos de tu selección; el resto se simula.</div></div>
+    <div class="lr-item"><span class="lr-ico">✅</span><div><b>Victoria: 3 puntos + 1 sobre de figuritas.</b> Llegá primero a los 30 (o 15 en modo rápido).</div></div>
+    <div class="lr-item"><span class="lr-ico">🟡</span><div><b>Derrota en las buenas: 1 punto</b> (columna DB) y a veces un sobre extra.</div></div>
+    <div class="lr-item"><span class="lr-ico">❌</span><div><b>Derrota en las malas: 0 puntos.</b></div></div>
+    <div class="lr-item"><span class="lr-ico">🎟️</span><div><b>Clasifican a Dieciseisavos:</b> el 1º y 2º de cada grupo (24) + los 8 mejores terceros (32 en total).</div></div>
+    <div class="lr-item"><span class="lr-ico">🏆</span><div><b>Cuadro de eliminación directa</b> (Dieciseisavos → Octavos → Cuartos → Semis → Final), más un Tercer Puesto. Si quedás eliminado, el resto del Mundial se simula solo.</div></div>
+    <div class="lr-item"><span class="lr-ico">📒</span><div><b>Premios en figuritas:</b> clasificar a octavos, llegar a semis, y sobre todo ser CAMPEÓN (5 sobres + 1 LEYENDA garantizada).</div></div>
+    <button class="btn primary" style="width:100%; margin-top:12px;" onclick="closeModal('mundial-reglas-modal')">¡A POR LA COPA!</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ÁLBUM DE FIGURITAS TRUGOL
+     ══════════════════════════════════════════ -->
+<div class="modal" id="album-modal">
+  <div class="modal-box album-box">
+    <h2>📒 Álbum TRUGOL — Leyendas del Truco</h2>
+    <div id="album-progreso"></div>
+    <button class="btn primary album-sobre-btn" id="album-btn-sobre" onclick="figusAbrirSobreUI()">✉️ ABRIR SOBRE (0)</button>
+    <button class="btn respond album-canje-btn" id="album-btn-canje" onclick="figusCanjearUI()">🔄 CANJEAR REPETIDAS (0/5) → +1 SOBRE</button>
+    <div class="album-wrap" id="album-grid"></div>
+    <div class="album-ayuda">Ganá fechas de la liga para conseguir sobres · Campeón del torneo: 5 sobres + 1 LEYENDA garantizada</div>
+    <button class="btn primary" style="margin-top:10px; float:right;" onclick="closeModal('album-modal')">CERRAR</button>
+  </div>
+</div>
+
+<!-- Overlay de apertura de sobre -->
+<div id="sobre-overlay">
+  <div class="sobre-panel">
+    <div class="sobre-titulo">✉️ SOBRE TRUGOL</div>
+    <div class="sobre-sub" id="sobre-sub">¡3 figuritas nuevas!</div>
+
+    <!-- FASE 1 — el paquete cerrado. Es un <button> de verdad y no un div con
+         onclick: así lo agarra el teclado y los lectores de pantalla lo anuncian
+         como algo accionable, que es literalmente lo que es. -->
+    <button type="button" class="sobre-paquete" id="sobre-paquete" aria-label="Abrir el sobre">
+      <svg class="sobre-svg" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="sbPapel" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#15334f"/>
+            <stop offset="55%" stop-color="#0d2238"/>
+            <stop offset="100%" stop-color="#081827"/>
+          </linearGradient>
+          <linearGradient id="sbBanda" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f5c518"/>
+            <stop offset="100%" stop-color="#c99a0c"/>
+          </linearGradient>
+          <linearGradient id="sbBrillo" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"  stop-color="#fff" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#fff" stop-opacity=".38"/>
+            <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="sbClip"><rect x="14" y="10" width="172" height="230" rx="10"/></clipPath>
+        </defs>
+
+        <!-- Cuerpo del sobre -->
+        <rect x="14" y="10" width="172" height="230" rx="10" fill="url(#sbPapel)" stroke="#f5c518" stroke-width="2.5"/>
+        <!-- Escudo -->
+        <g transform="translate(100 118)">
+          <path d="M0 -40 L34 -27 V6 Q34 30 0 44 Q-34 30 -34 6 V-27 Z"
+                fill="rgba(245,197,24,.13)" stroke="#f5c518" stroke-width="2.5"/>
+          <text y="10" text-anchor="middle" font-family="Bebas Neue,Oswald,sans-serif"
+                font-size="34" fill="#f5c518" letter-spacing="2">TG</text>
+        </g>
+        <text x="100" y="196" text-anchor="middle" font-family="Bebas Neue,Oswald,sans-serif"
+              font-size="19" fill="#fff" letter-spacing="3">3 FIGURITAS</text>
+        <text x="100" y="215" text-anchor="middle" font-family="Oswald,sans-serif"
+              font-size="9" fill="rgba(255,255,255,.5)" letter-spacing="2">ÁLBUM TRUGOL</text>
+
+        <!-- Brillo que barre el papel (lo anima el CSS) -->
+        <g clip-path="url(#sbClip)">
+          <rect class="sobre-brillo" x="-120" y="0" width="70" height="250" fill="url(#sbBrillo)" transform="skewX(-18)"/>
+        </g>
+
+        <!-- LA TAPA: se rasga y sale volando. Va última para quedar encima. -->
+        <g class="sobre-tapa">
+          <rect x="14" y="10" width="172" height="44" rx="10" fill="url(#sbBanda)"/>
+          <rect x="14" y="44" width="172" height="10" fill="#c99a0c"/>
+          <text x="100" y="40" text-anchor="middle" font-family="Bebas Neue,Oswald,sans-serif"
+                font-size="21" fill="#0d2238" letter-spacing="3">TRUGOL</text>
+          <!-- Línea de rasgado -->
+          <path d="M14 55 l10 4 l10 -4 l10 4 l10 -4 l10 4 l10 -4 l10 4 l10 -4 l10 4 l10 -4
+                   l10 4 l10 -4 l10 4 l10 -4 l10 4 l10 -4 l10 4"
+                fill="none" stroke="rgba(245,197,24,.55)" stroke-width="1.5" stroke-dasharray="3 3"/>
+        </g>
+      </svg>
+      <span class="sobre-tip">TOCÁ PARA ABRIR</span>
+      <span class="sobre-flash" aria-hidden="true"></span>
+    </button>
+
+    <div class="sobre-cartas" id="sobre-cartas"></div>
+    <button class="btn primary sobre-listo" onclick="figusCerrarSobre()">¡A PEGARLAS!</button>
+  </div>
+</div>
+
+<!-- Overlay de zoom de figurita -->
+<div id="figu-zoom-overlay">
+  <div class="sobre-panel figu-zoom-panel">
+    <div class="figu-zoom-card" id="figu-zoom-card"></div>
+    <div id="figu-zoom-info"></div>
+    <button class="btn primary" onclick="figusCerrarZoom()">CERRAR</button>
+  </div>
+</div>
+
+<div class="modal" id="tutorial-modal">
+  <div class="modal-box">
+    <h2>Reglas del Truco Argentino</h2>
+    <div class="tut-section">
+      <h3>1. Jerarquía de las Cartas (De mayor a menor)</h3>
+      <p>1. Ancho de Espada · 2. Ancho de Basto · 3. Siete de Espada · 4. Siete de Oro · 5. Todos los Tres · 6. Todos los Dos · 7. Anchos falsos (1 de Oro y 1 de Copa) · 8. Reyes (12) · 9. Caballos (11) · 10. Sotas (10) · 11. Sietes falsos (7 de Basto y 7 de Copa) · 12. Seises (6) · 13. Cincos (5) · 14. Cuatros (4)</p>
+    </div>
+    <div class="tut-section">
+      <h3>2. El Envido</h3>
+      <p>Se canta antes de tirar la primera carta. Se puntúa con dos cartas del mismo palo (suma + 20). Figuras valen 0. Cadena: Envido (+2) → Real Envido (+3) → Falta Envido (lo que le falta al que va ganando). No quiero: 1 punto para el que cantó.</p>
+    </div>
+    <div class="tut-section">
+      <h3>3. El Truco</h3>
+      <p>Se puede cantar en cualquier momento. Truco (2 pts) → Retruco (3 pts) → Vale Cuatro (4 pts). Solo sube quien aceptó el nivel anterior. No quiero: nivel cantado − 1 puntos.</p>
+    </div>
+    <!-- Enlaces REALES (<a href>), no botones con onclick: Google no sigue un
+         onclick, así que sin esto las páginas de contenido quedaban huérfanas
+         y sin autoridad. El texto del ancla lleva las keywords a propósito. -->
+    <p class="tut-mas">
+      ¿Querés más detalle? Mirá el
+      <a href="reglamento.html" target="_blank" rel="noopener">reglamento del truco argentino</a>
+      completo, o la guía de
+      <a href="como-jugar.html" target="_blank" rel="noopener">cómo jugar al truco</a>
+      si estás empezando.
+    </p>
+    <button class="btn primary" style="width:100%; margin-top:10px;" onclick="closeModal('tutorial-modal')">¡ENTENDIDO!</button>
+  </div>
+</div>
+
+<!-- Badge sala activa -->
+<div id="casa-badge" onclick="casaAbrirPanel()" title="Sala activa — tocá para gestionar"></div>
+
+<!-- FABs solo visibles en la mesa de juego -->
+<!-- 5 — Los 11 accesos estaban TODOS a la vista, del mismo tamaño y sin
+     agrupar: cuando todo pesa igual, no pesa nada. Ahora viven detrás de
+     un botón y la mesa recupera esa franja. -->
+<button class="fab" id="fab-menu-btn" style="display:none"
+        title="Menú" aria-expanded="false"
+        onclick="(function(b){var g=document.getElementById('fab-group');
+                 var abierto=g.classList.toggle('fab-abierto');
+                 b.setAttribute('aria-expanded',abierto);
+                 b.textContent=abierto?'✕':'☰';})(this)">☰</button>
+<div class="fab-group" id="fab-group" style="display:none">
+  <!-- SALIR va primero: es el que queda pegado al ☰ (el grupo crece hacia
+       arriba), o sea el más fácil de alcanzar con el pulgar. Hasta el 5 ago
+       la mesa NO tenía salida en medio de la partida — se salía solo por la
+       tarjeta de fin de partido. Ver mesaSalirAlMenu() en juego_ui.js. -->
+  <button class="fab fab-salir" title="Salir al menú" onclick="mesaSalirAlMenu()">🚪</button>
+  <button class="fab fab-album" title="Álbum de figuritas" onclick="openModal('album-modal')">📒<span id="fab-sobres-badge" class="fab-badge" style="display:none">0</span></button>
+  <button class="fab" title="Liga"          onclick="openModal('liga-modal')">🏆</button>
+  <button class="fab" title="Mundial 2026" onclick="openModal('mundial-modal')">🌍</button>
+  <button class="fab" title="Estadísticas" onclick="openModal('stats-modal')">📊</button>
+  <button class="fab" title="Reglas"        onclick="openModal('tutorial-modal')">📜</button>
+  <button class="fab" title="Ajustes"       onclick="openModal('settings-modal')">⚙️</button>
+  <button class="fab" title="Tienda de fichas"  onclick="tiendaAbrir()"       style="font-size:18px;">🛒</button>
+  <button class="fab" title="Sala de apuestas" onclick="casaAbrirPanel()"    style="font-size:18px;">💰</button>
+  <button class="fab" title="Ranking"          onclick="rankingAbrirModal()" style="font-size:18px;">🏅</button>
+  <button class="fab" title="QR de pago"       onclick="qrAbrirModal()"      style="font-size:18px;">📲</button>
+  <button class="fab" title="Historial"        onclick="historialAbrirModal()" style="font-size:18px;">📋</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: PANEL ORGANIZADOR (Casa Truco GOL)
+     ══════════════════════════════════════════ -->
+<div class="modal" id="casa-modal">
+  <div class="modal-box" style="max-height:90vh;overflow-y:auto;">
+    <h2>💰 Casa Truco GOL</h2>
+
+    <!-- CONFIG DEL ORGANIZADOR -->
+    <div class="casa-section">
+      <div class="casa-section-title">⚙️ TUS DATOS (organizador)</div>
+      <label class="settings-label">Tu nombre / apodo</label>
+      <input type="text" id="casa-nombre-inp" class="name-input" placeholder="Ej: Chucho GOL" style="margin-bottom:8px;">
+      <label class="settings-label">Tu alias MP (opcional — solo para el aporte al organizador)</label>
+      <input type="text" id="casa-alias-inp" class="name-input" placeholder="Ej: chucho.trucogol" style="margin-bottom:8px;">
+      <label class="settings-label">Aporte al organizador (%, opcional)</label>
+      <input type="number" id="casa-comision-inp" class="name-input" placeholder="Ej: 0" min="0" max="50" step="1" style="margin-bottom:4px;" value="0">
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px;line-height:1.4;">
+        💡 La plata va <b>directo del perdedor al ganador</b>. Vos no cobrás el pozo. El aporte es una colaboración voluntaria, no una comisión obligatoria.
+      </div>
+      <button class="btn respond" onclick="casaGuardarConfig()" style="width:100%;">GUARDAR MIS DATOS</button>
+    </div>
+
+    <!-- NUEVA SALA -->
+    <div class="casa-section">
+      <div class="casa-section-title">🎯 NUEVA SALA</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <div style="flex:1">
+          <label class="settings-label">Tipo</label>
+          <select id="sala-tipo" class="name-input" style="background:rgba(0,0,0,.4);color:#fff;" onchange="casaTipoChange()">
+            <option value="1v1">Mano a Mano (1v1)</option>
+            <option value="torneo4">Torneo 4 jugadores</option>
+            <option value="torneo6">Torneo 6 jugadores</option>
+          </select>
+        </div>
+        <div style="flex:1">
+          <label class="settings-label">Buy-in por jugador ($)</label>
+          <input type="number" id="sala-buyin" class="name-input" placeholder="Ej: 1000" min="0" step="100" oninput="casaActualizarPozo()">
+        </div>
+      </div>
+      <!-- Preview: riesgo/recompensa por mano (pago DIRECTO, no hay pozo central) -->
+      <div id="sala-pozo-preview" style="
+        background:rgba(200,168,75,.08); border:1px solid rgba(200,168,75,.25);
+        border-radius:8px; padding:9px 8px; margin-bottom:6px;
+        font-family:var(--f-ui,'Oswald',sans-serif); font-size:9px; letter-spacing:.3px;
+        display:flex; justify-content:space-between; align-items:center; text-align:center; gap:4px;
+      ">
+        <span style="color:rgba(255,255,255,.45);flex:1;min-width:0;">ARRIESGÁS<br><b id="pv-arriesga" style="color:#fff;font-size:13px;white-space:nowrap;">$0</b></span>
+        <span style="color:rgba(255,255,255,.45);flex:1;min-width:0;">GANÁS<br><b id="pv-gana" style="color:#2ecc71;font-size:13px;white-space:nowrap;">+$0</b></span>
+        <span style="color:rgba(255,255,255,.45);flex:1;min-width:0;">PERDÉS<br><b id="pv-pierde" style="color:#e74c3c;font-size:13px;white-space:nowrap;">-$0</b></span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:10px;line-height:1.4;">
+        Por cada mano: el que pierde le transfiere el buy-in <b>directo al ganador</b>. Nadie paga por adelantado.<span id="pv-aporte-note" style="display:none;"> Aporte al organizador: <b id="pv-aporte" style="color:var(--gold,#f5c518);"></b> (opcional).</span>
+      </div>
+      <button class="btn primary" onclick="casaCrearSala()" style="width:100%;">✅ CREAR SALA</button>
+    </div>
+
+    <!-- JUGADORES Y CONFIRMACIÓN -->
+    <div class="casa-section" id="sala-jugadores-section">
+      <div class="casa-section-title">👥 JUGADORES</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <input type="text" id="sala-j-nombre" class="name-input" placeholder="Nombre" style="flex:2;" onkeydown="if(event.key==='Enter'){event.preventDefault();casaAgregarJugador()}">
+        <input type="text" id="sala-j-alias"  class="name-input" placeholder="Alias MP" style="flex:2;" onkeydown="if(event.key==='Enter'){event.preventDefault();casaAgregarJugador()}">
+        <button class="btn respond" onclick="casaAgregarJugador()" style="flex:0.9;padding:8px 2px;font-size:11px;">+ Agregar</button>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px;line-height:1.4;">
+        Tocá <b>Confirmar</b> en cada uno cuando esté de acuerdo con la apuesta. <b>Nadie transfiere nada todavía</b> — el que pierde le paga al ganador recién al final.
+      </div>
+      <div id="sala-lista" style="max-height:220px;overflow-y:auto;margin-bottom:8px;"></div>
+      <div id="sala-resumen"></div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+      <button class="btn btn-wa" id="sala-btn-compartir" onclick="casaCompartirInstrucciones()" disabled>
+        📲 Enviar instrucciones de pago por WA
+      </button>
+      <button class="btn primary" id="sala-btn-iniciar" onclick="casaIniciarPartida()" disabled>
+        🎯 TODOS ADENTRO — A JUGAR
+      </button>
+      <button class="btn danger" onclick="casaCerrarSala()" style="display:none;" id="btn-cerrar-sala">
+        🔴 CERRAR SALA
+      </button>
+      <button class="btn" onclick="casaCerrar()">CERRAR PANEL</button>
+    </div>
+
+    <!-- BRACKET DEL TORNEO -->
+    <div id="torneo-bracket-section" style="display:none;margin-top:14px;">
+      <div class="casa-section-title">🏆 BRACKET DEL TORNEO</div>
+      <div id="torneo-bracket"></div>
+      <button class="btn btn-wa" onclick="casaCompartirBracket()" style="width:100%;margin-top:8px;">
+        📲 Compartir bracket por WA
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: PAGO AL GANADOR
+     ══════════════════════════════════════════ -->
+<div class="modal" id="casa-pago-modal">
+  <div class="modal-box">
+    <div class="cp-titulo">🏆 RESULTADO OFICIAL</div>
+    <div class="cp-marcador" id="cp-marcador">0 - 0</div>
+
+    <div class="cp-box">
+      <div class="lbl">GANADOR</div>
+      <div class="ganador" id="cp-ganador">—</div>
+      <div class="lbl" style="margin-top:8px;">RECIBE DE LOS PERDEDORES</div>
+      <div class="pot" id="cp-pot">$0</div>
+      <div class="cp-alias" id="cp-alias"></div>
+    </div>
+
+    <!-- Ledger de cobros: marcá quién te pagó. El que no, queda MOROSO. -->
+    <div id="cp-cobros"></div>
+
+    <div class="cp-box" style="background:rgba(200,168,75,.06);border-color:rgba(200,168,75,.3);">
+      <div class="lbl">APORTE AL ORGANIZADOR (OPCIONAL)</div>
+      <div style="font-family:var(--f-display,'Bebas Neue',sans-serif);font-size:30px;color:var(--gold,#f5c518);" id="cp-comision">—</div>
+    </div>
+
+    <p class="cp-instruccion">
+      ⬆️ Cada perdedor le transfiere el buy-in <b>directo al ganador</b>.<br>
+      Vos no tocás el pozo. Después compartí el resultado al grupo.
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-mp" id="cp-btn-mp" onclick="" style="display:none;">
+        💳 Abrir MP del ganador (para que le paguen)
+      </button>
+      <button class="btn btn-wa" onclick="casaCompartirPago()">
+        📲 Compartir resultado al grupo de WA
+      </button>
+      <button class="btn" onclick="casaPagoCerrar()">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: RANKING DE JUGADORES
+     ══════════════════════════════════════════ -->
+<div class="modal" id="ranking-modal">
+  <div class="modal-box" style="max-height:85vh;overflow-y:auto;">
+    <h2>🏅 Ranking de Jugadores</h2>
+    <div id="rank-lista" style="margin-bottom:14px;"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-wa" onclick="rankingCompartirWA()" style="width:100%;">
+        📲 Compartir ranking por WhatsApp
+      </button>
+      <button class="btn danger" onclick="rankingResetear()" style="width:100%;">
+        🗑 Resetear ranking
+      </button>
+      <button class="btn" onclick="rankingCerrar()" style="width:100%;">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: QR DE PAGO
+     ══════════════════════════════════════════ -->
+<div class="modal" id="qr-modal">
+  <div class="modal-box">
+    <h2>📲 QR de Aporte (opcional)</h2>
+    <p style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:8px;text-align:center;">
+      QR de tu Mercado Pago para el <b>aporte voluntario</b> al organizador.<br>
+      No es el buy-in: el pozo va directo del perdedor al ganador.
+    </p>
+
+    <img id="qr-img" src="data:," alt="QR MP" width="220" height="220">
+
+    <div class="qr-info">
+      <div class="qr-alias-lbl" id="qr-alias">—</div>
+      <div class="qr-monto-lbl" id="qr-monto">—</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;">
+        Organizador: <span id="qr-nombre">—</span>
+      </div>
+      <a id="qr-link" class="qr-link" href="#" target="_blank" rel="noopener">—</a>
+    </div>
+
+    <div style="display:flex;gap:8px;margin:12px 0 8px;">
+      <input type="number" id="qr-monto-inp" class="name-input"
+             placeholder="Monto personalizado ($)" style="flex:1;"
+             oninput="qrActualizarMonto()">
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-wa" onclick="qrCompartirWA()" style="width:100%;">
+        📲 Compartir link de pago por WA
+      </button>
+      <button class="btn" onclick="qrCerrar()" style="width:100%;">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: HISTORIAL DE SALAS
+     ══════════════════════════════════════════ -->
+<div class="modal" id="historial-modal">
+  <div class="modal-box" style="max-height:85vh;overflow-y:auto;">
+    <h2>📋 Historial de Salas</h2>
+
+    <div class="hist-totales">
+      <span>Total salas: <strong id="hist-total-salas">0</strong></span>
+      <span style="color:var(--gold,#f5c518);">
+        Aportes acumulados: <strong id="hist-total-comision">$0</strong>
+      </span>
+    </div>
+
+    <div id="hist-lista" style="margin:8px 0 14px;max-height:320px;overflow-y:auto;"></div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn danger" onclick="historialLimpiar()" style="width:100%;">
+        🗑 Borrar historial
+      </button>
+      <button class="btn" onclick="historialCerrar()" style="width:100%;">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<script defer src="cartas.js"></script>
+<script defer src="reglas_truco.js"></script>
+<script defer src="sim.js"></script>
+<script defer src="netClient.js"></script>
+<script defer src="juego.js"></script>
+<!-- Mesa 1v1 autoritativa (BETA, punto 4 de la auditoría del online).
+     auto1v1_client.js usa netOn()/netAuto1v1*() de netClient.js, así que
+     tiene que cargar después; auto1v1_ui.js usa cartas.js (urlCarta,
+     DORSO_URI), que ya cargó arriba. -->
+<script defer src="auto1v1_client.js"></script>
+<script defer src="auto1v1_ui.js"></script>
+<!-- La PARTIDA de esa mesa se juega en la mesa real (la de Picadito):
+     auto1v1_mesa.js traduce el snapshot del server al estado que aplica
+     motor_online.js y rutea las acciones al revés. Solo declara funciones,
+     así que el orden con motor_online.js/juego.js no importa. -->
+<script defer src="auto1v1_mesa.js"></script>
+<script defer src="juego2v2.js"></script>
+<script defer src="juego2v2_ui.js"></script>
+<script defer src="juego2v2_online.js"></script>
+<script defer src="deeplink.js"></script>
+<script defer src="ia.js"></script>
+<script defer src="juego_ui.js"></script>
+<script defer src="anotador.js"></script>
+<script defer src="equipos.js"></script>
+<script defer src="liga.js"></script>
+<script defer src="mundial.js"></script>
+<script defer src="figuritas.js"></script>
+<script defer src="torneo.js"></script>
+<script defer src="copas.js"></script>
+<script defer src="nivel.js"></script>
+<script defer src="club.js"></script>
+<script defer src="tribuna.js"></script>
+<script defer src="juego_online.js"></script>
+<script defer src="motor_online.js"></script>
+<script defer src="reporte_resultado.js"></script>
+<script defer src="amigos.js"></script>
+<script defer src="apuesta.js"></script>
+<!-- tienda_metricas ANTES de tienda.js: define tiendaEvento(), que la
+     tienda llama en cada paso del embudo. -->
+<script defer src="tienda_metricas.js"></script>
+<script defer src="tienda.js"></script>
+<script defer src="extras.js"></script>
+<script defer src="features_storage.js"></script>
+<script defer src="features_ui.js"></script>
+<script defer src="features_gameplay.js"></script>
+<script defer src="features_progression.js"></script>
+<script defer src="saldoServer.js"></script>
+<script defer src="features_historia.js"></script>
+<script defer src="features_extra.js"></script>
+<script defer src="features_adaptive.js"></script>
+<script defer src="features_torneo_plus.js"></script>
+<script defer src="features_ambiente.js"></script>
+<script defer src="features_visual.js"></script>
+<script defer src="features_modos.js"></script>
+<script defer src="features_contenido.js"></script>
+<script defer src="features_pwa.js"></script>
+<!-- Menú 2.0: acordeón + parallax + transiciones. Va ÚLTIMO a propósito:
+     agrupa lo que los demás scripts inyectaron en el menú. -->
+<script defer src="menu_fx.js"></script>
+<!-- escenarios.js ANTES que tema_palco.js: el segundo le pregunta al primero
+     cuál es el escenario activo para saber si monta sus capas. Los dos usan
+     DOMContentLoaded, y ahí el orden de los <script defer> es el que manda. -->
+<script defer src="escenarios.js"></script>
+<script defer src="tema_palco.js"></script>
+
+<!-- ══════════════════════════════════════════
+     DORSO TRUGOL (Selección Argentina)
+     Usa DORSO_URI definido en cartas.js y lo aplica
+     automáticamente a toda carta boca abajo del rival.
+     ══════════════════════════════════════════ -->
+<script>
+(function () {
+  // Los scripts del motor cargan con `defer` (no bloquean el parseo del
+  // HTML), así que recién existen cuando termina de parsearse el documento
+  // — por eso el chequeo de DORSO_URI y todo lo demás vive adentro de
+  // DOMContentLoaded, no suelto a nivel del script (si no, esto corría
+  // ANTES que cartas.js y el dorso quedaba sin aplicar para siempre).
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof DORSO_URI === "undefined") {
+      console.warn("DORSO_URI no encontrado: actualizá cartas.js con la versión que incluye el dorso TRUGOL.");
+      return;
+    }
+
+    // El dorso ahora es un archivo (images/dorso.webp), no un data-URI, así
+    // que PUEDE fallar la carga — y como se aplica por background-image no hay
+    // onerror. Lo probamos con un Image() y, si no viene, caemos al dorso
+    // vectorial inline. Sin esto, un 404 dejaría las cartas del rival como
+    // rectángulos vacíos y nadie se enteraría de por qué.
+    let dorsoURL = DORSO_URI;
+    if (typeof DORSO_URI_FALLBACK !== "undefined" && !/^data:/.test(DORSO_URI)) {
+      const probe = new Image();
+      probe.onerror = () => {
+        console.warn("dorso: no cargó " + DORSO_URI + " — usando el dorso vectorial de respaldo");
+        document.querySelectorAll("style[data-dorso]").forEach(n => n.remove());
+        aplicarEstilos(DORSO_URI_FALLBACK);
+      };
+      probe.src = DORSO_URI;
+    }
+
+    // Estilos del dorso (pisan cualquier dorso anterior)
+    function aplicarEstilos(url) {
+    const st = document.createElement("style");
+    st.setAttribute("data-dorso", "1");
+    st.textContent = `
+      .dorso-trugol {
+        background-image: url("${url}") !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        border-radius: 8px;
+        box-shadow: 0 4px 14px rgba(0,0,0,.45);
+      }
+      /* Oculta los pips/números del dorso viejo sin romper el layout */
+      .dorso-trugol * { visibility: hidden; }
+    `;
+    document.head.appendChild(st);
+    }
+    aplicarEstilos(dorsoURL);
+
+    // Aplica el dorso a cada carta de la mano del rival, ahora y cada vez que se redibuje
+    function vestirRival() {
+      const rh = document.getElementById("rival-hand");
+      if (!rh) return;
+      [...rh.children].forEach(c => c.classList.add("dorso-trugol"));
+    }
+
+    vestirRival();
+    const rh = document.getElementById("rival-hand");
+    if (rh) new MutationObserver(vestirRival).observe(rh, { childList: true });
+  });
+})();
+</script>
+</body>
+</html>
