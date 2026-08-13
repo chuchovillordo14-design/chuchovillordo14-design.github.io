@@ -1,0 +1,11 @@
+# TrucoGOL — https://trucogol.com.ar
+# Juego de truco argentino. Se indexa todo: no hay panel de admin ni
+# contenido privado servido por acá (el backend vive en otro dominio).
+#
+# NO se bloquean .js ni .css a propósito: Google necesita ejecutarlos para
+# renderizar la página, y bloquearlos empeora el ranking en vez de mejorarlo.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://trucogol.com.ar/sitemap.xml

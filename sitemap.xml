@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sitemap de TrucoGOL. Tres URLs: el juego y las dos guías del truco.
+
+  Histórico: hasta el 11-ago existía además una cuarta página, landing.html,
+  que quedaba AFUERA de acá a propósito porque su texto promocionaba "torneos
+  con apuestas" — justo lo que la decisión del 25-jul sacó del producto
+  público. El 11-ago Chucho la sacó del sitio entera (no estaba linkeada
+  desde ningún lado y nadie llegaba a ella). Si algún día se quiere de
+  vuelta, está en el historial de git.
+
+  Al agregar una página nueva: acordate de actualizar también el lastmod.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://trucogol.com.ar/</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://trucogol.com.ar/como-jugar.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://trucogol.com.ar/reglamento.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
