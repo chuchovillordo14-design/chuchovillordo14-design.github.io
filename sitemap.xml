@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sitemap de TrucoGOL. Tres URLs: el juego y las dos guías del truco.
+
+  Histórico: hasta el 11-ago existía además una cuarta página, landing.html,
+  que quedaba AFUERA de acá a propósito porque su texto promocionaba "torneos
+  con apuestas" — justo lo que la decisión del 25-jul sacó del producto
+  público. El 11-ago Chucho la sacó del sitio entera (no estaba linkeada
+  desde ningún lado y nadie llegaba a ella). Si algún día se quiere de
+  vuelta, está en el historial de git.
+
+  El lastmod de la HOME lo pone solo deploy-pages.sh en cada publicación
+  (11-sep-2026): era un "acordate de actualizarlo" en este mismo comentario y
+  pasó lo que tenía que pasar — la portada cambió el 7-sep y el sitemap siguió
+  diciendo 2026-08-08 hasta el 11. Un recordatorio no es un mecanismo.
+
+  Las otras dos URLs sí van a mano: son páginas de texto que casi no cambian,
+  y ponerles la fecha del deploy sería mentirle a Google todas las veces.
+
+  Al agregar una página nueva: sumala acá con su lastmod real.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://trucogol.com.ar/</loc>
+    <lastmod>2026-09-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://trucogol.com.ar/como-jugar.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://trucogol.com.ar/reglamento.html</loc>
+    <lastmod>2026-08-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
