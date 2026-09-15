@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  potrero.svg — escenario nivel 1 de TrucoGOL.
+
+  Vertical 3:4 (1080×1440), el mismo formato que el palco, para que los dos
+  entren en el mismo #mesa sin recalcular nada.
+
+  DIBUJADO Y NO RENDERIZADO: Blender no está en esta Mac (los scripts de
+  escenografia-3d/ apuntan al de la máquina Windows). Un SVG además da
+  coordenadas EXACTAS, que es lo que el contrato de slots necesita para
+  apoyar el marcador y las cartas encima — un render de difusión no.
+
+  ZONA LIBRE: la franja Y 520-1010 va casi vacía a propósito. Ahí caen las
+  cartas jugadas y la mano del jugador; todo el detalle vive arriba (cielo,
+  casas, alambrado) y abajo (tierra pisada). Si se agrega algo, que sea
+  fuera de esa banda o el juego pierde legibilidad, que es lo que el
+  escenario nunca puede costar.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1440" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="pCielo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2d4a6b"/>
+      <stop offset="38%"  stop-color="#7a6a72"/>
+      <stop offset="62%"  stop-color="#d59a63"/>
+      <stop offset="100%" stop-color="#e8b878"/>
+    </linearGradient>
+    <linearGradient id="pTierra" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#9c6b42"/>
+      <stop offset="30%"  stop-color="#8a5c38"/>
+      <stop offset="100%" stop-color="#5e3d24"/>
+    </linearGradient>
+    <radialGradient id="pPisado" cx="50%" cy="42%" r="52%">
+      <stop offset="0%"   stop-color="#a87b50" stop-opacity=".85"/>
+      <stop offset="100%" stop-color="#a87b50" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Alambrado romboidal: un patrón y no 200 líneas sueltas -->
+    <pattern id="pAlambre" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M0 17 L17 0 L34 17 L17 34 Z" fill="none"
+            stroke="#3c3833" stroke-width="2.5" stroke-opacity=".55"/>
+    </pattern>
+    <linearGradient id="pViñeta" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#000" stop-opacity=".45"/>
+      <stop offset="22%"  stop-color="#000" stop-opacity="0"/>
+      <stop offset="78%"  stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity=".55"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── CIELO ────────────────────────────────────────────────── -->
+  <rect width="1080" height="470" fill="url(#pCielo)"/>
+  <circle cx="835" cy="392" r="52" fill="#ffd9a0" opacity=".55"/>
+
+  <!-- ── EL BARRIO, en silueta ────────────────────────────────── -->
+  <g fill="#2b2620" opacity=".92">
+    <rect x="0"   y="300" width="150" height="170"/>
+    <rect x="150" y="342" width="118" height="128"/>
+    <rect x="268" y="286" width="132" height="184"/>
+    <rect x="400" y="330" width="96"  height="140"/>
+    <rect x="496" y="308" width="150" height="162"/>
+    <rect x="646" y="348" width="110" height="122"/>
+    <rect x="756" y="318" width="140" height="152"/>
+    <rect x="896" y="336" width="184" height="134"/>
+    <!-- Tanque de agua y antena, que es lo que hace que se lea "barrio" -->
+    <rect x="322" y="238" width="16" height="52"/>
+    <rect x="292" y="206" width="76" height="38" rx="6"/>
+    <rect x="812" y="252" width="7"  height="68"/>
+    <path d="M795 262 h44 M799 278 h36 M803 294 h28" stroke="#2b2620" stroke-width="5"/>
+  </g>
+  <!-- Ventanitas encendidas: el detalle que da la hora del día -->
+  <g fill="#f0c274" opacity=".8">
+    <rect x="42"  y="352" width="20" height="24"/>
+    <rect x="300" y="330" width="20" height="24"/>
+    <rect x="352" y="382" width="20" height="24"/>
+    <rect x="540" y="348" width="20" height="24"/>
+    <rect x="612" y="400" width="20" height="24"/>
+    <rect x="800" y="366" width="20" height="24"/>
+    <rect x="948" y="384" width="20" height="24"/>
+  </g>
+
+  <!-- ── ALAMBRADO ────────────────────────────────────────────── -->
+  <rect x="0" y="300" width="1080" height="200" fill="url(#pAlambre)"/>
+  <g stroke="#2f2b26" stroke-width="9" opacity=".85">
+    <path d="M96 296 v206"/><path d="M400 296 v206"/>
+    <path d="M690 296 v206"/><path d="M986 296 v206"/>
+  </g>
+  <path d="M0 300 h1080" stroke="#2f2b26" stroke-width="7" opacity=".85"/>
+
+  <!-- ── LOS DOS ARCOS DE CAÑO ────────────────────────────────── -->
+  <g stroke="#c9c3b6" stroke-width="11" fill="none" stroke-linecap="round" opacity=".95">
+    <path d="M212 500 v-96 h190 v96"/>
+    <path d="M678 500 v-96 h190 v96"/>
+  </g>
+  <g stroke="#c9c3b6" stroke-width="4" opacity=".35">
+    <path d="M212 470 h190 M212 440 h190 M258 404 v96 M306 404 v96 M354 404 v96"/>
+    <path d="M678 470 h190 M678 440 h190 M724 404 v96 M772 404 v96 M820 404 v96"/>
+  </g>
+
+  <!-- ── TIERRA ───────────────────────────────────────────────── -->
+  <rect y="470" width="1080" height="970" fill="url(#pTierra)"/>
+  <ellipse cx="540" cy="880" rx="600" ry="420" fill="url(#pPisado)"/>
+
+  <!-- Pastito que sobrevive en los bordes, nunca en el medio -->
+  <g fill="#5d6b32" opacity=".65">
+    <ellipse cx="70"   cy="560" rx="90" ry="26"/>
+    <ellipse cx="1010" cy="596" rx="104" ry="30"/>
+    <ellipse cx="40"   cy="1290" rx="120" ry="40"/>
+    <ellipse cx="1046" cy="1330" rx="130" ry="44"/>
+    <ellipse cx="186"  cy="1400" rx="90" ry="30"/>
+  </g>
+  <!-- Piedritas y marcas de pisadas -->
+  <g fill="#4a3018" opacity=".5">
+    <ellipse cx="238" cy="620" rx="13" ry="6"/><ellipse cx="880" cy="668" rx="16" ry="7"/>
+    <ellipse cx="150" cy="1140" rx="18" ry="8"/><ellipse cx="944" cy="1188" rx="14" ry="6"/>
+    <ellipse cx="330" cy="1352" rx="20" ry="8"/><ellipse cx="742" cy="1300" rx="15" ry="7"/>
+  </g>
+  <g stroke="#6b4527" stroke-width="6" opacity=".45" stroke-linecap="round">
+    <path d="M120 700 q120 40 250 26"/>
+    <path d="M960 760 q-140 44 -260 30"/>
+    <path d="M180 1240 q180 -30 320 -10"/>
+  </g>
+
+  <!-- La pelota, apoyada al costado para no invadir la zona de juego -->
+  <g transform="translate(126 1198)">
+    <ellipse cx="0" cy="34" rx="40" ry="10" fill="#000" opacity=".3"/>
+    <circle r="36" fill="#efe9dd"/>
+    <path d="M0 -36 a36 36 0 0 1 34 11 l-13 40 h-42 l-13 -40 a36 36 0 0 1 34 -11 Z" fill="#2b2620" opacity=".82"/>
+  </g>
+
+  <!-- Viñeta: hunde bordes y deja el centro legible para las cartas -->
+  <rect width="1080" height="1440" fill="url(#pViñeta)"/>
+</svg>
