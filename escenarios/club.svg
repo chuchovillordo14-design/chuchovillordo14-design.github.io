@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  club.svg — escenario nivel 2: la cancha del club de barrio.
+
+  Mismo formato que el potrero y el palco: vertical 3:4 (1080×1440), para que
+  los tres entren en el mismo #mesa sin recalcular nada.
+
+  Tiene que leerse como un ESCALÓN ARRIBA del potrero, no como otro lugar:
+  donde había tierra ahora hay pasto (disparejo, con peladas), donde había
+  alambrado pelado ahora hay una tribuna de tablones con gente, y los arcos
+  de caño pasan a tener red. Es mediodía y no atardecer — el club abre
+  temprano. El barrio del fondo es el mismo, un poco más lejos.
+
+  ZONA LIBRE: la franja Y 520-1010 va casi vacía, igual que en el potrero.
+  Ahí caen las cartas jugadas y la mano. Todo el detalle vive fuera de ahí.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1440" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="cCielo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#6ea9d6"/>
+      <stop offset="55%"  stop-color="#a8cbe4"/>
+      <stop offset="100%" stop-color="#d3e2ea"/>
+    </linearGradient>
+    <linearGradient id="cPasto" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4a8f43"/>
+      <stop offset="35%"  stop-color="#3d7d38"/>
+      <stop offset="100%" stop-color="#27522a"/>
+    </linearGradient>
+    <linearGradient id="cMadera" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#8a6236"/>
+      <stop offset="100%" stop-color="#5f4123"/>
+    </linearGradient>
+    <!-- Red de los arcos: acá sí hay red, en el potrero no -->
+    <pattern id="cRed" width="18" height="18" patternUnits="userSpaceOnUse">
+      <path d="M0 0 h18 M0 0 v18" stroke="#eceae4" stroke-opacity=".5" stroke-width="1.6"/>
+    </pattern>
+    <linearGradient id="cViñeta" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#000" stop-opacity=".38"/>
+      <stop offset="24%"  stop-color="#000" stop-opacity="0"/>
+      <stop offset="76%"  stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity=".5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── CIELO DE MEDIODÍA ────────────────────────────────────── -->
+  <rect width="1080" height="440" fill="url(#cCielo)"/>
+  <g fill="#fff" opacity=".62">
+    <ellipse cx="200" cy="120" rx="110" ry="34"/>
+    <ellipse cx="268" cy="104" rx="72"  ry="28"/>
+    <ellipse cx="820" cy="168" rx="128" ry="36"/>
+    <ellipse cx="742" cy="152" rx="76"  ry="26"/>
+  </g>
+
+  <!-- ── EL BARRIO, más lejos que en el potrero ───────────────── -->
+  <g fill="#7d8a8f" opacity=".55">
+    <rect x="0"   y="286" width="128" height="90"/>
+    <rect x="128" y="308" width="104" height="68"/>
+    <rect x="470" y="292" width="132" height="84"/>
+    <rect x="602" y="316" width="96"  height="60"/>
+    <rect x="880" y="298" width="200" height="78"/>
+  </g>
+
+  <!-- ── TORRES DE ILUMINACIÓN ────────────────────────────────── -->
+  <g fill="#4c5358">
+    <rect x="128" y="140" width="12" height="240"/>
+    <rect x="86"  y="126" width="96" height="26" rx="4"/>
+    <rect x="938" y="140" width="12" height="240"/>
+    <rect x="896" y="126" width="96" height="26" rx="4"/>
+  </g>
+  <g fill="#f4efd8" opacity=".85">
+    <rect x="92"  y="131" width="18" height="16"/><rect x="118" y="131" width="18" height="16"/>
+    <rect x="144" y="131" width="18" height="16"/>
+    <rect x="902" y="131" width="18" height="16"/><rect x="928" y="131" width="18" height="16"/>
+    <rect x="954" y="131" width="18" height="16"/>
+  </g>
+
+  <!-- ── TRIBUNA DE TABLONES, con gente ───────────────────────── -->
+  <!-- Techo de chapa -->
+  <path d="M150 300 h780 l38 34 h-856 Z" fill="#6b7276"/>
+  <rect x="188" y="334" width="704" height="8" fill="#4c5358"/>
+  <!-- Escalones -->
+  <g fill="url(#cMadera)">
+    <rect x="176" y="342" width="728" height="34"/>
+    <rect x="164" y="376" width="752" height="34"/>
+    <rect x="152" y="410" width="776" height="34"/>
+  </g>
+  <g stroke="#41290f" stroke-width="2" opacity=".5">
+    <path d="M176 376 h728 M164 410 h752 M152 444 h776"/>
+    <path d="M300 342 v102 M480 342 v102 M660 342 v102 M840 342 v102"/>
+  </g>
+  <!-- Hinchada: cabezas y hombros, sin cara. A esta distancia una cara
+       dibujada se lee como una mancha rara; la silueta se lee como gente. -->
+  <g opacity=".92">
+    <g fill="#2f3a44">
+      <circle cx="214" cy="352" r="11"/><circle cx="268" cy="352" r="11"/><circle cx="366" cy="352" r="11"/>
+      <circle cx="470" cy="352" r="11"/><circle cx="592" cy="352" r="11"/><circle cx="700" cy="352" r="11"/>
+      <circle cx="806" cy="352" r="11"/><circle cx="866" cy="352" r="11"/>
+    </g>
+    <g fill="#c8452f">
+      <circle cx="196" cy="386" r="11"/><circle cx="322" cy="386" r="11"/><circle cx="438" cy="386" r="11"/>
+      <circle cx="640" cy="386" r="11"/><circle cx="754" cy="386" r="11"/><circle cx="886" cy="386" r="11"/>
+    </g>
+    <g fill="#2f5fa8">
+      <circle cx="240" cy="420" r="11"/><circle cx="396" cy="420" r="11"/><circle cx="524" cy="420" r="11"/>
+      <circle cx="678" cy="420" r="11"/><circle cx="828" cy="420" r="11"/>
+    </g>
+  </g>
+  <!-- Bandera colgada del paravalanchas -->
+  <rect x="392" y="446" width="200" height="34" fill="#c8452f" opacity=".9"/>
+  <rect x="392" y="446" width="200" height="11" fill="#f0e8d8" opacity=".85"/>
+
+  <!-- Paredón bajo con franja pintada -->
+  <rect y="452" width="1080" height="48" fill="#cfc7b4"/>
+  <rect y="452" width="1080" height="14" fill="#c8452f" opacity=".8"/>
+
+  <!-- ── ARCOS CON RED ────────────────────────────────────────── -->
+  <g>
+    <rect x="224" y="404" width="176" height="96" fill="url(#cRed)" opacity=".9"/>
+    <rect x="680" y="404" width="176" height="96" fill="url(#cRed)" opacity=".9"/>
+  </g>
+  <g stroke="#f4f2ec" stroke-width="9" fill="none" stroke-linecap="round">
+    <path d="M224 500 v-96 h176 v96"/>
+    <path d="M680 500 v-96 h176 v96"/>
+  </g>
+
+  <!-- ── PASTO ────────────────────────────────────────────────── -->
+  <rect y="500" width="1080" height="940" fill="url(#cPasto)"/>
+  <!-- Franjas de corte, más anchas hacia abajo (perspectiva) -->
+  <g fill="#000" opacity=".07">
+    <rect y="500"  width="1080" height="72"/>
+    <rect y="644"  width="1080" height="86"/>
+    <rect y="816"  width="1080" height="100"/>
+    <rect y="1016" width="1080" height="118"/>
+    <rect y="1252" width="1080" height="140"/>
+  </g>
+  <!-- Peladas: lo que separa un club de barrio de un estadio -->
+  <g fill="#8a6a3c" opacity=".42">
+    <ellipse cx="150"  cy="1130" rx="96" ry="30"/>
+    <ellipse cx="980"  cy="1058" rx="74" ry="24"/>
+    <ellipse cx="286"  cy="1372" rx="120" ry="36"/>
+    <ellipse cx="880"  cy="1332" rx="88" ry="28"/>
+    <ellipse cx="60"   cy="620"  rx="70" ry="22"/>
+  </g>
+  <!-- Línea del área, apenas marcada con cal gastada -->
+  <g stroke="#e9e6dc" stroke-width="6" fill="none" opacity=".38">
+    <path d="M150 1440 v-190 h780 v190"/>
+    <path d="M418 1440 v-72 h244 v72"/>
+  </g>
+
+  <!-- Pelota al costado, fuera de la zona de juego -->
+  <g transform="translate(960 1210)">
+    <ellipse cx="0" cy="34" rx="38" ry="10" fill="#000" opacity=".28"/>
+    <circle r="34" fill="#f4f2ec"/>
+    <path d="M0 -34 a34 34 0 0 1 32 10 l-12 38 h-40 l-12 -38 a34 34 0 0 1 32 -10 Z" fill="#2f3a44" opacity=".8"/>
+  </g>
+
+  <rect width="1080" height="1440" fill="url(#cViñeta)"/>
+</svg>
